@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository=userRepository;
     }
 
+    @Override
     public User createGuestUser(String username){
 
         userRepository.findByUsername(username).ifPresent(u ->{
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     };
 
+    @Override
     public Optional<User> findByUsername(String username){
         return userRepository.findByUsername(username);
 
