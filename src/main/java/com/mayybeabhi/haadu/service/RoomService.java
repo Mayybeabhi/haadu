@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface RoomService {
     Room createRoom(String adminUserId);
     Room getRoomByCode(String roomCode);
+    void joinRoom(String roomCode,String userId);
 }

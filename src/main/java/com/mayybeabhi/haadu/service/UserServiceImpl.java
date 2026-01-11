@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     public User createGuestUser(String username){
 
         userRepository.findByUsername(username).ifPresent(u ->{
-            throw new UsernameAlreadyExistsException("User already exists");
+            throw new UsernameAlreadyExistsException("Username already exists");
         });
 
         User user = new User();
