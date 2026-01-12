@@ -50,6 +50,26 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(UserNotInRoomException.class)
+    public ResponseEntity<?> handleRoomNotFound(UserNotInRoomException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(GameAlreadyStartedException.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(GameAlreadyStartedException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(SongAlreadySubmitted.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(SongAlreadySubmitted ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(AllSongsSubmitted.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(AllSongsSubmitted ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     // ---------------- FALLBACK ----------------
 
     @ExceptionHandler(IllegalArgumentException.class)

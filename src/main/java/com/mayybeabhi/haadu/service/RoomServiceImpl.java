@@ -79,7 +79,12 @@ public class RoomServiceImpl implements RoomService{
           throw new RoomFullException("Room full!");
       }
 
-      RoomPlayer player=new RoomPlayer();
+        if (room.getStatus() != RoomStatus.WAITING) {
+            throw new IllegalStateException("Cannot join room after game has started");
+        }
+
+
+        RoomPlayer player=new RoomPlayer();
       player.setRoomId(room.getId());
       player.setUserId(userUUID);
       player.setScore(0);

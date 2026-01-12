@@ -2,32 +2,33 @@ package com.mayybeabhi.haadu.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.Instant;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "song_submissions",uniqueConstraints = @UniqueConstraint(columnNames = {"room_id","user_id","youtube_url"}))
+public class SongSubmission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String username;
-
-    @Column(name = "password_hash")
-    private String passwordHash;
+    @Column(nullable = false)
+    private UUID roomId;
 
     @Column(nullable = false)
-    private boolean isGuest=true;
+    private UUID userId;
+
+    @Column
+    private String youtubeUrl;
 
     @Column(nullable = false)
     private Instant createdAt;
 
     @PrePersist
-    protected  void onCreate(){
+    void onCreate(){
         this.createdAt=Instant.now();
     }
 }

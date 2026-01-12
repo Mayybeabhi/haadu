@@ -1,5 +1,6 @@
 package com.mayybeabhi.haadu.entity;
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,28 +9,27 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "room_players", uniqueConstraints = {@UniqueConstraint(columnNames = {"room_id","user_id"})})
-public class RoomPlayer {
+@Table(name = "guesses",uniqueConstraints = @UniqueConstraint(columnNames = {"round_id","guessing_user_id"}))
+public class Guess {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    UUID id;
 
     @Column(nullable = false)
-    private UUID roomId;
+    UUID roundId;
 
     @Column(nullable = false)
-    private  UUID userId;
+    UUID guessingUserId;
 
     @Column(nullable = false)
-    private int score=0;
+    UUID guessedUserId;
 
     @Column(nullable = false)
-    private Instant joinedAt;
+    Instant createdAt;
 
     @PrePersist
     void onCreate(){
-        this.joinedAt =Instant.now();
+        this.createdAt= Instant.now();
     }
-
 }

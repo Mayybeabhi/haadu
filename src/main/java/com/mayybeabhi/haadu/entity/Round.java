@@ -11,35 +11,38 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "rooms")
-public class Room {
+@Table(name = "rounds",uniqueConstraints = @UniqueConstraint(columnNames = {"room_id", "round_number"}))
+public class Round {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 5)
-    private String roomCode;
+    @Column(nullable = false)
+    private UUID roomId;
+
+    @Column
+    private UUID songSubmissionId;
 
     @Column(nullable = false)
-    private UUID adminUserId;
-
-    @Column(nullable = false)
-    private int maxPlayers;
-
-    @Column(nullable = false)
-    private int songCount;
+    private int roundNumber;
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false)
-    private RoomStatus status;
+    private RoundStatus status;
+
+    @Column(nullable = false)
+    private Instant startedAt;
+
+    @Column
+    private Instant endedAt;
 
     @Column(nullable = false)
     private Instant createdAt;
 
     @PrePersist
-    protected void onCreate(){
+    void onCreate(){
         this.createdAt=Instant.now();
     }
 }
