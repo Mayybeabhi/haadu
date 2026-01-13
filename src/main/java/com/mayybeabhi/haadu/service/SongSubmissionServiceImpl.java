@@ -1,11 +1,9 @@
 package com.mayybeabhi.haadu.service;
 
-import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.RoomStatus;
 import com.mayybeabhi.haadu.entity.SongSubmission;
-import com.mayybeabhi.haadu.exception.AllSongsSubmitted;
 import com.mayybeabhi.haadu.exception.GameAlreadyStartedException;
-import com.mayybeabhi.haadu.exception.SongAlreadySubmitted;
+import com.mayybeabhi.haadu.exception.InvalidGameStatusException;
 import com.mayybeabhi.haadu.exception.UserNotInRoomException;
 import com.mayybeabhi.haadu.repository.RoomPlayerRepository;
 import com.mayybeabhi.haadu.repository.RoomRepository;
@@ -13,7 +11,6 @@ import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,10 +39,10 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
         }
 
         if (songSubmissionRepository.existsByRoomIdAndUserIdAndYoutubeUrl(roomId,userUUID,youtubeUrl)){
-            throw new SongAlreadySubmitted("Song already submitted");
+            throw new InvalidGameStatusException("Song already submitted");
         }
         if (songSubmissionRepository.countByRoomIdAndUserId(roomId,userUUID)>=roomRepository.findById(roomId).get().getSongCount()){
-            throw new AllSongsSubmitted("All songs have been already submitted");
+            throw new InvalidGameStatusException("All songs have been already submitted");
         }
 
         SongSubmission song =new SongSubmission();

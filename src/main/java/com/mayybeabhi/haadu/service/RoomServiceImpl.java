@@ -1,12 +1,10 @@
 package com.mayybeabhi.haadu.service;
 
+import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.RoomPlayer;
 import com.mayybeabhi.haadu.entity.RoomStatus;
-import com.mayybeabhi.haadu.exception.RoomFullException;
-import com.mayybeabhi.haadu.exception.RoomNotFoundException;
-import com.mayybeabhi.haadu.exception.UserAlreadyInRoomException;
-import com.mayybeabhi.haadu.exception.UserNotFoundException;
+import com.mayybeabhi.haadu.exception.*;
 import com.mayybeabhi.haadu.repository.RoomPlayerRepository;
 import com.mayybeabhi.haadu.repository.RoomRepository;
 import com.mayybeabhi.haadu.repository.UserRepository;
@@ -39,9 +37,12 @@ public class RoomServiceImpl implements RoomService{
 
         room.setRoomCode(generateRoomCode());
         room.setAdminUserId(UUID.fromString(adminUserId));
-        room.setMaxPlayers(10);
+        room.setMaxPlayers(2);
         room.setSongCount(4);
         room.setStatus(RoomStatus.WAITING);
+        room.setRoundTimerEnabled(false);
+        room.setInBetweenRoundTimerEnabled(false);
+
 
         Room savedRoom = roomRepository.save(room);
 
@@ -90,6 +91,55 @@ public class RoomServiceImpl implements RoomService{
       player.setScore(0);
 
       roomPlayerRepository.save(player);
+
+    }
+    
+    @Override
+    @Transactional
+    public Room updateRoomSettings(String roomCode, UpdateRoomSettingsRequest request){
+        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Invalid room code, room not found"));
+        UUID adminUserUUID=UUID.fromString(request.getAdminUserId());
+
+        if(!room.getAdminUserId().equals(adminUserUUID)){
+            throw new UserNotAdminException("Only admin of the room can edit settings");
+        }
+
+        if (!room.getStatus().equals(RoomStatus.WAITING)){
+            throw new InvalidGameStatusException("Cannot update settings after game has started");
+        }
+
+        room.setRoundTimerEnabled(request.getIsRoundTimerEnabled());
+        if(request.getIsRoundTimerEnabled()){
+            if (request.getRoundDuration()==null||request.getRoundDuration()<=0){
+                throw new BusinessRuleException("Round duration must be greater than 0");
+            }
+
+            room.setRoundTimer(request.getRoundDuration());
+        }
+        else {
+            room.setRoundTimer(0);
+        }
+
+        room.setInBetweenRoundTimerEnabled(request.getIsInBetweenRoundTimerEnabled());
+        if(request.getIsInBetweenRoundTimerEnabled()){
+            if (request.getInBetweenRoundDuration()==null||request.getInBetweenRoundDuration()<=0){
+                throw new BusinessRuleException("In Between Round duration must be greater than 0");
+            }
+
+            room.setRoundTimer(request.getRoundDuration());
+        }
+        else {
+            room.setRoundTimer(0);
+        }
+
+        room.setMaxPlayers(request.getMaxPlayers());
+        room.setSongCount(request.getSongCount());
+
+
+
+        return roomRepository.save(room);
+
+
 
     }
 }

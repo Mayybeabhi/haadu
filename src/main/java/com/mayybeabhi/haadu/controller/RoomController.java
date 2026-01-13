@@ -2,6 +2,7 @@ package com.mayybeabhi.haadu.controller;
 
 import com.mayybeabhi.haadu.dto.CreateRoomRequest;
 import com.mayybeabhi.haadu.dto.JoinRoomRequest;
+import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.service.RoomService;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,9 @@ public class RoomController {
     }
 
     @PostMapping
-    public Room createRoom(@RequestBody CreateRoomRequest request){
-        return roomService.createRoom(request.getAdminUserId());
+    public ResponseEntity<?> createRoom(@RequestBody CreateRoomRequest request){
+         roomService.createRoom(request.getAdminUserId());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{roomCode}")
@@ -30,4 +32,11 @@ public class RoomController {
          roomService.joinRoom(roomCode, request.getUserId());
          return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{roomCode}/settings")
+    public ResponseEntity<?> updateRoomSettings(@PathVariable String roomCode,@RequestBody UpdateRoomSettingsRequest request){
+             roomService.updateRoomSettings(roomCode,request);
+        return ResponseEntity.ok().build();
+    }
+
 }

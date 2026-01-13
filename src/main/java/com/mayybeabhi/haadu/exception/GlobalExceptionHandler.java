@@ -60,13 +60,19 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(SongAlreadySubmitted.class)
-    public ResponseEntity<?> handleUserAlreadyInRoom(SongAlreadySubmitted ex) {
+    @ExceptionHandler(UserNotAdminException.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(UserNotAdminException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(AllSongsSubmitted.class)
-    public ResponseEntity<?> handleUserAlreadyInRoom(AllSongsSubmitted ex) {
+
+    @ExceptionHandler(InvalidGameStatusException.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(InvalidGameStatusException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<?> handleUserAlreadyInRoom(BusinessRuleException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 

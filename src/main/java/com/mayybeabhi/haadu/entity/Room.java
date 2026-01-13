@@ -38,6 +38,18 @@ public class Room {
     @Column(nullable = false)
     private Instant createdAt;
 
+    @Column(nullable = false)
+    private boolean isRoundTimerEnabled=true;
+
+    @Column(name = "round_duration_seconds")
+    private int roundTimer;
+
+    @Column(nullable = false,name = "is_between_round_timer_enabled")
+    private boolean isInBetweenRoundTimerEnabled=true;
+
+    @Column(name="between_round_duration_seconds")
+    private int inBetweenRoundTimer;
+
     @PrePersist
     protected void onCreate(){
         this.createdAt=Instant.now();
