@@ -1,17 +1,15 @@
 package com.mayybeabhi.haadu.service;
 
 import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
-import com.mayybeabhi.haadu.entity.Room;
-import com.mayybeabhi.haadu.entity.RoomPlayer;
-import com.mayybeabhi.haadu.entity.RoomStatus;
+import com.mayybeabhi.haadu.entity.*;
 import com.mayybeabhi.haadu.exception.*;
-import com.mayybeabhi.haadu.repository.RoomPlayerRepository;
-import com.mayybeabhi.haadu.repository.RoomRepository;
-import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
-import com.mayybeabhi.haadu.repository.UserRepository;
+import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -20,12 +18,14 @@ public class RoomServiceImpl implements RoomService{
     private final RoomPlayerRepository roomPlayerRepository;
     private final UserRepository userRepository;
     private final SongSubmissionRepository songSubmissionRepository;
+    private final RoundRepository roundRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository){
+    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.userRepository=userRepository;
         this.songSubmissionRepository=songSubmissionRepository;
+        this.roundRepository=roundRepository;
     }
 
     @Override
@@ -171,5 +171,50 @@ public class RoomServiceImpl implements RoomService{
 
         room.setStatus(RoomStatus.PLAYING);
         roomRepository.save(room);
+    }
+
+    @Override
+    @Transactional
+    public void startRound(String roomCode,String adminUserId){
+        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
+        UUID adminUUID=UUID.fromString(adminUserId);
+
+        if (!room.getAdminUserId().equals(adminUUID)){
+            throw new UserNotAdminException("Only admins can start a round");
+        }
+
+        if(!room.getStatus().equals(RoomStatus.PLAYING)){
+            throw new InvalidGameStatusException("Game has not started");
+        }
+
+        if(roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING)){
+            throw new InvalidGameStatusException("A round is already active");
+        }
+
+        long countRounds=roundRepository.countByRoomId(room.getId());
+
+        if (countRounds>=room.getSongCount()){
+            throw new InvalidGameStatusException("All rounds have been completed");
+        }
+
+        List<SongSubmission> unusedSongs=songSubmissionRepository.findUnusedSongsByRoomId(room.getId());
+
+        if(unusedSongs.isEmpty()){
+            throw new InvalidGameStatusException("No songs available");
+        }
+
+        SongSubmission selectedSong= unusedSongs.get(new Random().nextInt(unusedSongs.size()));
+        int roundNumber= (int)countRounds+1;
+
+        Round round=new Round();
+
+        round.setRoomId(room.getId());
+        round.setRoundNumber(roundNumber);
+        round.setStatus(RoundStatus.PLAYING);
+        round.setSongSubmissionId(selectedSong.getId());
+        round.setStartedAt(Instant.now());
+
+        roundRepository.save(round);
+
     }
 }

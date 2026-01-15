@@ -9,4 +9,5 @@ public interface RoomService {
     void joinRoom(String roomCode,String userId);
     Room updateRoomSettings(String roonCode, UpdateRoomSettingsRequest request);
     void startGame(String roomCode,String adminUserId);
+    void startRound(String roomCode, String adminUserId);
 }

@@ -1,9 +1,6 @@
 package com.mayybeabhi.haadu.controller;
 
-import com.mayybeabhi.haadu.dto.CreateRoomRequest;
-import com.mayybeabhi.haadu.dto.JoinRoomRequest;
-import com.mayybeabhi.haadu.dto.StartGameRequest;
-import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
+import com.mayybeabhi.haadu.dto.*;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.service.RoomService;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +40,12 @@ public class RoomController {
     @PostMapping("/{roomCode}/start")
     public ResponseEntity<?> startGame(@PathVariable String roomCode, @RequestBody StartGameRequest request){
         roomService.startGame(roomCode, request.getAdminUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("{roomCode}/rounds/start")
+    public ResponseEntity<?> startRound(@PathVariable String roomCode, @RequestBody StartRoundRequest request){
+        roomService.startRound(roomCode, request.getAdminUserId());
         return ResponseEntity.ok().build();
     }
 

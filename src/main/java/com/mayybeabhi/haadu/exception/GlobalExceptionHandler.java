@@ -76,6 +76,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(RoundNotFoundException.class)
+    public ResponseEntity<?> handleRoomNotFound(RoundNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     // ---------------- FALLBACK ----------------
 
     @ExceptionHandler(IllegalArgumentException.class)
