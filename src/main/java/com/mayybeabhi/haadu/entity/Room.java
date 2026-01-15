@@ -42,13 +42,13 @@ public class Room {
     private boolean isRoundTimerEnabled=true;
 
     @Column(name = "round_duration_seconds")
-    private int roundTimer;
+    private Integer roundTimer;
 
     @Column(nullable = false,name = "is_between_round_timer_enabled")
     private boolean isInBetweenRoundTimerEnabled=true;
 
     @Column(name="between_round_duration_seconds")
-    private int inBetweenRoundTimer;
+    private Integer inBetweenRoundTimer;
 
     @PrePersist
     protected void onCreate(){

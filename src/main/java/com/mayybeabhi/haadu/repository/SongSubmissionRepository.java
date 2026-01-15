@@ -11,5 +11,6 @@ public interface SongSubmissionRepository extends JpaRepository<SongSubmission, 
 
     boolean existsByRoomIdAndUserIdAndYoutubeUrl(UUID roomId,UUID userId,String youtubeUrl);
     long countByRoomIdAndUserId(UUID roomId,UUID userId);
+    long countByRoomId(UUID roomId);
 
 }

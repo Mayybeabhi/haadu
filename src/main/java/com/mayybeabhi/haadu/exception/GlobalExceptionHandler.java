@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotInRoomException.class)
     public ResponseEntity<?> handleRoomNotFound(UserNotInRoomException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler(GameAlreadyStartedException.class)
@@ -62,18 +62,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotAdminException.class)
     public ResponseEntity<?> handleUserAlreadyInRoom(UserNotAdminException ex) {
-        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
 
     @ExceptionHandler(InvalidGameStatusException.class)
     public ResponseEntity<?> handleUserAlreadyInRoom(InvalidGameStatusException ex) {
-        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(BusinessRuleException.class)
     public ResponseEntity<?> handleUserAlreadyInRoom(BusinessRuleException ex) {
-        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     // ---------------- FALLBACK ----------------

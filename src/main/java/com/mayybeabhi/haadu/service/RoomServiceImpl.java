@@ -7,6 +7,7 @@ import com.mayybeabhi.haadu.entity.RoomStatus;
 import com.mayybeabhi.haadu.exception.*;
 import com.mayybeabhi.haadu.repository.RoomPlayerRepository;
 import com.mayybeabhi.haadu.repository.RoomRepository;
+import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
 import com.mayybeabhi.haadu.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,13 @@ public class RoomServiceImpl implements RoomService{
     private final RoomRepository roomRepository;
     private final RoomPlayerRepository roomPlayerRepository;
     private final UserRepository userRepository;
+    private final SongSubmissionRepository songSubmissionRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository){
+    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.userRepository=userRepository;
+        this.songSubmissionRepository=songSubmissionRepository;
     }
 
     @Override
@@ -141,5 +144,32 @@ public class RoomServiceImpl implements RoomService{
 
 
 
+    }
+
+    @Override
+    @Transactional
+    public void startGame(String roomCode, String adminUserId){
+        Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
+        UUID adminUUID=UUID.fromString(adminUserId);
+        if (!room.getAdminUserId().equals(adminUUID)){
+            throw new UserNotAdminException("Only admins can start the game!");
+        }
+
+        if(!room.getStatus().equals(RoomStatus.WAITING)){
+            throw new InvalidGameStatusException("Invalid game status");
+        }
+
+        long roomPlayersCount=roomPlayerRepository.countByRoomId(room.getId());
+
+        if (roomPlayersCount<2){
+            throw new InvalidGameStatusException("Not enough players to start the game");
+        }
+
+        if(roomPlayersCount*room.getSongCount()!=songSubmissionRepository.countByRoomId(room.getId())){
+            throw new InvalidGameStatusException("All users have not submitted the required number of songs");
+        }
+
+        room.setStatus(RoomStatus.PLAYING);
+        roomRepository.save(room);
     }
 }
