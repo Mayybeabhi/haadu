@@ -10,4 +10,5 @@ public interface RoomService {
     Room updateRoomSettings(String roonCode, UpdateRoomSettingsRequest request);
     void startGame(String roomCode,String adminUserId);
     void startRound(String roomCode, String adminUserId);
+    void endRound(String roomCode, String adminUserId, String roundId);
 }

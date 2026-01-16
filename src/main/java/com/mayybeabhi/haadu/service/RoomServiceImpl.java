@@ -19,13 +19,15 @@ public class RoomServiceImpl implements RoomService{
     private final UserRepository userRepository;
     private final SongSubmissionRepository songSubmissionRepository;
     private final RoundRepository roundRepository;
+    private final GuessRepository guessRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository){
+    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository,GuessRepository guessRepository){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.userRepository=userRepository;
         this.songSubmissionRepository=songSubmissionRepository;
         this.roundRepository=roundRepository;
+        this.guessRepository=guessRepository;
     }
 
     @Override
@@ -216,5 +218,43 @@ public class RoomServiceImpl implements RoomService{
 
         roundRepository.save(round);
 
+    }
+
+    @Override
+    @Transactional
+    public void endRound(String roomCode, String adminUserId, String roundId){
+
+        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
+        UUID adminUUID=UUID.fromString(adminUserId);
+
+        if (!room.getAdminUserId().equals(adminUUID)){
+            throw new UserNotAdminException("Only admins can end a round");
+        }
+
+        if(!room.getStatus().equals(RoomStatus.PLAYING)){
+            throw new InvalidGameStatusException("Game is not active");
+        }
+
+        Round round= roundRepository.findById(UUID.fromString(roundId)).orElseThrow(()-> new RoundNotFoundException("Round not found"));
+
+        if(!round.getRoomId().equals(room.getId())){
+            throw new InvalidGameStatusException("Round does not belong to the room");
+        }
+
+        if(!round.getStatus().equals(RoundStatus.PLAYING)){
+            throw new InvalidGameStatusException("Round already closed");
+        }
+
+        if(roomPlayerRepository.countByRoomId(room.getId())!=guessRepository.countByRoundId(round.getId())){
+            throw new BusinessRuleException("Everyone has not yet guessed");
+        }
+
+        SongSubmission song=songSubmissionRepository.findById(round.getSongSubmissionId()).orElseThrow(()->new InvalidGameStatusException("Song submission missing"));
+
+        UUID rightUserId=song.getUserId();
+
+        round.setStatus(RoundStatus.REVEALED);
+        round.setEndedAt(Instant.now());
+        roundRepository.save(round);
     }
 }

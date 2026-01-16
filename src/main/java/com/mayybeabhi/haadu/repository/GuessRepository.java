@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface GuessRepository extends JpaRepository<Guess, UUID> {
     boolean existsByRoundIdAndGuessingUserId(UUID roundId,UUID guessingUserId);
+    long countByRoundId(UUID roundId);
 }

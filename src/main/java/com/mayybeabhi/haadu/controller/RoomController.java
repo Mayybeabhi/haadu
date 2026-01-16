@@ -49,4 +49,12 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("{roomCode}/rounds/{roundId}/end")
+    public ResponseEntity<?> endRound(@PathVariable String roomCode,@PathVariable String roundId, @RequestBody EndRoundRequest request){
+        roomService.endRound(roomCode, request.getAdminUserId(), roundId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }
