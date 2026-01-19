@@ -55,6 +55,14 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{roomCode}/end")
+    public ResponseEntity<?> endGame(
+            @PathVariable String roomCode,
+            @RequestBody EndGameRequest request
+    ) {
+        roomService.endGame(roomCode, request.getAdminUserId());
+        return ResponseEntity.ok().build();
+    }
 
 
 }

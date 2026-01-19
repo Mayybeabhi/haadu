@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+
 @Service
 public class RoomServiceImpl implements RoomService{
     private final RoomRepository roomRepository;
@@ -195,7 +196,7 @@ public class RoomServiceImpl implements RoomService{
 
         long countRounds=roundRepository.countByRoomId(room.getId());
 
-        if (countRounds>=room.getSongCount()){
+        if (countRounds>=songSubmissionRepository.countByRoomId(room.getId())){
             throw new InvalidGameStatusException("All rounds have been completed");
         }
 
@@ -257,4 +258,39 @@ public class RoomServiceImpl implements RoomService{
         round.setEndedAt(Instant.now());
         roundRepository.save(round);
     }
+
+    @Transactional
+    public void endGame(String roomCode, String adminUserId) {
+
+        Room room = roomRepository.findByRoomCode(roomCode)
+                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+
+        UUID adminUUID = UUID.fromString(adminUserId);
+
+        if (!room.getAdminUserId().equals(adminUUID)) {
+            throw new UserNotAdminException("Only admin can finish the game");
+        }
+
+        if (room.getStatus() != RoomStatus.PLAYING) {
+            throw new InvalidGameStatusException("Game is not in progress");
+        }
+
+
+        boolean activeRoundExists =
+                roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING);
+
+        if (activeRoundExists) {
+            throw new InvalidGameStatusException("Cannot finish while a round is active");
+        }
+
+        long completedRounds = roundRepository.countByRoomId(room.getId());
+
+        if (completedRounds < songSubmissionRepository.countByRoomId(room.getId())) {
+            throw new InvalidGameStatusException("Not all rounds are completed");
+        }
+
+        room.setStatus(RoomStatus.FINISHED);
+        roomRepository.save(room);
+    }
+
 }

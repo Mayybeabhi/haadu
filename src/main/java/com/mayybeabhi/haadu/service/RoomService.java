@@ -11,4 +11,5 @@ public interface RoomService {
     void startGame(String roomCode,String adminUserId);
     void startRound(String roomCode, String adminUserId);
     void endRound(String roomCode, String adminUserId, String roundId);
+    void endGame(String roomCode, String adminUserId);
 }
