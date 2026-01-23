@@ -5,9 +5,13 @@ import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
 import com.mayybeabhi.haadu.entity.RoundStatus;
 import com.mayybeabhi.haadu.exception.*;
+import com.mayybeabhi.haadu.realtime.GameEvent;
+import com.mayybeabhi.haadu.realtime.GameEventPublisher;
+import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -18,14 +22,16 @@ public class GuessServiceImpl implements GuessService{
     private final SongSubmissionRepository songSubmissionRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
+    private final GameEventPublisher gameEventPublisher;
 
-    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository, UserRepository userRepository, SongSubmissionRepository songSubmissionRepository, RoundRepository roundRepository,GuessRepository guessRepository){
+    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository, UserRepository userRepository, SongSubmissionRepository songSubmissionRepository, RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.userRepository=userRepository;
         this.songSubmissionRepository=songSubmissionRepository;
         this.roundRepository=roundRepository;
         this.guessRepository=guessRepository;
+        this.gameEventPublisher=gameEventPublisher;
     }
 
     public void submitGuess(String roomCode,String roundId,String guessingUserId, String guessedUserId){
@@ -66,6 +72,8 @@ public class GuessServiceImpl implements GuessService{
         guess.setGuessedUserId(guessedUserUUID);
         guess.setRoundId(roundUUID);
         guessRepository.save(guess);
+
+        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.GUESS_SUBMITTED, Map.of("userId",guessingUserId)));
 
     }
 }

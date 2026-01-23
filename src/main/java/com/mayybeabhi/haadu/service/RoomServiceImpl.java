@@ -3,12 +3,16 @@ package com.mayybeabhi.haadu.service;
 import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
 import com.mayybeabhi.haadu.entity.*;
 import com.mayybeabhi.haadu.exception.*;
+import com.mayybeabhi.haadu.realtime.GameEvent;
+import com.mayybeabhi.haadu.realtime.GameEventPublisher;
+import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -21,14 +25,16 @@ public class RoomServiceImpl implements RoomService{
     private final SongSubmissionRepository songSubmissionRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
+    private final GameEventPublisher gameEventPublisher;
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository,GuessRepository guessRepository){
+    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.userRepository=userRepository;
         this.songSubmissionRepository=songSubmissionRepository;
         this.roundRepository=roundRepository;
         this.guessRepository=guessRepository;
+        this.gameEventPublisher=gameEventPublisher;
     }
 
     @Override
@@ -219,6 +225,8 @@ public class RoomServiceImpl implements RoomService{
 
         roundRepository.save(round);
 
+        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.ROUND_STARTED, Map.of("roundNumber",roundNumber,"songId",selectedSong.getId())));
+
     }
 
     @Override
@@ -257,6 +265,8 @@ public class RoomServiceImpl implements RoomService{
         round.setStatus(RoundStatus.REVEALED);
         round.setEndedAt(Instant.now());
         roundRepository.save(round);
+
+        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.ROUND_CLOSED,Map.of("correctUserId",rightUserId)));
     }
 
     @Transactional
