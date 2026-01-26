@@ -1,13 +1,22 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createGuestUser } from '../api/roomApi'
 
 function Home() {
   const [username, setUsername] = useState('')
   const navigate = useNavigate()
 
-  const createRoom = async () => {
-    // TEMP: hardcode until API is wired
-    navigate('/rooms/0F79D')
+  const handleCreateRoom=async()=>{
+
+    const userRes=await createGuestUser(username)
+    const userId=userRes.data.id
+
+    const roomRes=await createRoom(userId)
+    const roomCode=roomRes.data.roomCode
+
+    navigate('/rooms/${roomCode}',{state:{userId}})
+
+
   }
 
   return (
@@ -20,9 +29,10 @@ function Home() {
         onChange={(e) => setUsername(e.target.value)}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
-      <button onClick={createRoom}>Create Room</button>
+      <button onClick={handleCreateRoom}>Create Room</button>
     </div>
   )
 }
