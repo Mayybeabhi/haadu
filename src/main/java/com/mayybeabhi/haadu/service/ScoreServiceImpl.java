@@ -4,7 +4,6 @@ import com.mayybeabhi.haadu.ScoringMode;
 import com.mayybeabhi.haadu.entity.Guess;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
-import com.mayybeabhi.haadu.exception.BusinessRuleException;
 import com.mayybeabhi.haadu.exception.RoomNotFoundException;
 import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;

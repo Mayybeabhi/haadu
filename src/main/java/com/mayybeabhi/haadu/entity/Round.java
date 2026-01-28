@@ -1,6 +1,5 @@
 package com.mayybeabhi.haadu.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcType;

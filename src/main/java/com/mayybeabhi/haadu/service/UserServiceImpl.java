@@ -1,7 +1,6 @@
 package com.mayybeabhi.haadu.service;
 
 import com.mayybeabhi.haadu.exception.UsernameAlreadyExistsException;
-import com.mayybeabhi.haadu.service.UserService;
 import com.mayybeabhi.haadu.entity.User;
 import com.mayybeabhi.haadu.repository.UserRepository;
 import org.springframework.stereotype.Service;

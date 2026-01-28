@@ -3,7 +3,6 @@ package com.mayybeabhi.haadu.controller;
 import com.mayybeabhi.haadu.dto.SubmitGuessRequest;
 import com.mayybeabhi.haadu.service.GuessService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
