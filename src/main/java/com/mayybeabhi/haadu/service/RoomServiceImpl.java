@@ -1,5 +1,6 @@
 package com.mayybeabhi.haadu.service;
 
+import com.mayybeabhi.haadu.dto.RoomPlayerResponse;
 import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
 import com.mayybeabhi.haadu.entity.*;
 import com.mayybeabhi.haadu.exception.*;
@@ -11,10 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -77,7 +75,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public void joinRoom(String roomCode,String userID){
+    public Room joinRoom(String roomCode,String userID){
       Room room = getRoomByCode(roomCode);
       UUID userUUID = UUID.fromString(userID);
 
@@ -103,7 +101,7 @@ public class RoomServiceImpl implements RoomService{
       player.setScore(0);
 
       roomPlayerRepository.save(player);
-
+      return room;
     }
     
     @Override
@@ -269,6 +267,7 @@ public class RoomServiceImpl implements RoomService{
         gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.ROUND_CLOSED,Map.of("correctUserId",rightUserId)));
     }
 
+    @Override
     @Transactional
     public void endGame(String roomCode, String adminUserId) {
 
@@ -301,6 +300,19 @@ public class RoomServiceImpl implements RoomService{
 
         room.setStatus(RoomStatus.FINISHED);
         roomRepository.save(room);
+    }
+
+    @Override
+    public List<RoomPlayerResponse> getPlayers(String roomCode){
+
+        Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
+        List<RoomPlayer> players= roomPlayerRepository.findByRoomId(room.getId());
+        return players.stream().map(p->{
+            User user= userRepository.findById(p.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
+
+            return new RoomPlayerResponse(user.getId(),user.getUsername(),room.getAdminUserId().equals(user.getId()));
+
+        }).toList();
     }
 
 }

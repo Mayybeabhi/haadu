@@ -6,6 +6,8 @@ import com.mayybeabhi.haadu.service.RoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
@@ -15,9 +17,9 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createRoom(@RequestBody CreateRoomRequest request){
-         roomService.createRoom(request.getAdminUserId());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> createRoom(@RequestBody CreateRoomRequest request){
+        Room room= roomService.createRoom(request.getAdminUserId());
+        return ResponseEntity.ok(room.getRoomCode());
     }
 
     @GetMapping("/{roomCode}")
@@ -26,9 +28,9 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/join")
-    public ResponseEntity<?> joinRoom(@PathVariable String roomCode,@RequestBody JoinRoomRequest request){
-         roomService.joinRoom(roomCode, request.getUserId());
-         return ResponseEntity.ok().build();
+    public ResponseEntity<String> joinRoom(@PathVariable String roomCode,@RequestBody JoinRoomRequest request){
+        Room room= roomService.joinRoom(roomCode, request.getUserId());
+         return ResponseEntity.ok(room.getRoomCode());
     }
 
     @PostMapping("/{roomCode}/settings")
@@ -64,5 +66,9 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{roomCode}/players")
+    public List<RoomPlayerResponse> getPlayers(@PathVariable String roomCode){
+        return roomService.getPlayers(roomCode);
+    }
 
 }

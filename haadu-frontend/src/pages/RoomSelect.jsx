@@ -10,7 +10,8 @@ function RoomSelect() {
 
   const handleCreateRoom = async () => {
     const res = await createRoom(userId)
-    navigate(`/rooms/${res.data.roomCode}`)
+    console.log(res.data)
+    navigate(`/rooms/${res.data}`)
   }
 
   const handleJoinRoom = async () => {

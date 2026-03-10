@@ -1,27 +1,51 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { connectToRoom } from '../ws/socket'
+import { getRoomPlayers } from '../api/roomApi'
 
 function Lobby() {
+
   const { roomCode } = useParams()
-  const [events, setEvents] = useState([])
+  const [players, setPlayers] = useState([])
+
+  const loadPlayers = async () => {
+    const res = await getRoomPlayers(roomCode)
+    setPlayers(res.data)
+  }
 
   useEffect(() => {
-    connectToRoom(roomCode, (event) => {
-      setEvents((prev) => [...prev, event])
+
+    loadPlayers()
+
+    const stomp = connectToRoom(roomCode, (event) => {
+      if(event.type === "PLAYER_JOINED"){
+        loadPlayers()
+      }
     })
-  }, [roomCode])
+
+    return () => {
+      if (stomp && stomp.connected) {
+          stomp.disconnect()
+        }
+    }
+
+  }, [])
 
   return (
     <div>
+
       <h2>Room Code: {roomCode}</h2>
 
-      <h3>Events</h3>
+      <h3>Players</h3>
+
       <ul>
-        {events.map((e, i) => (
-          <li key={i}>{e.type}</li>
+        {players.map(p => (
+          <li key={p.userId}>
+            {p.username} {p.isAdmin && "(Admin)"}
+          </li>
         ))}
       </ul>
+
     </div>
   )
 }
