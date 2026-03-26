@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { connectToRoom } from '../ws/socket'
 import { getRoomPlayers } from '../api/roomApi'
@@ -6,6 +6,7 @@ import { getRoomPlayers } from '../api/roomApi'
 function Lobby() {
 
   const { roomCode } = useParams()
+  const navigate = useNavigate()
   const [players, setPlayers] = useState([])
 
   const loadPlayers = async () => {
@@ -45,6 +46,11 @@ function Lobby() {
           </li>
         ))}
       </ul>
+
+      <button onClick={() => navigate(`/submit/${roomCode}`)}>
+        Submit Song
+      </button>
+
 
     </div>
   )

@@ -4,6 +4,7 @@ import RoomSelect from './pages/RoomSelect'
 import Lobby from './pages/Lobby'
 import Game from './pages/Game'
 import Scores from './pages/Scores'
+import SongSubmit from "./pages/SongSubmit"
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/rooms/:roomCode" element={<Lobby />} />
         <Route path="/game/:roomCode" element={<Game />} />
         <Route path="/scores/:roomCode" element={<Scores />} />
+        <Route path="/submit/:roomCode" element={<SongSubmit />} />
       </Routes>
     </BrowserRouter>
   )
