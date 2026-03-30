@@ -1,0 +1,275 @@
+.lobby-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lobby-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.room-code-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.code-label {
+  font-size: 0.9rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.code-box {
+  background: white;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.code-box:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.code-text {
+  font-size: 2.5rem;
+  letter-spacing: 0.3em;
+  color: var(--ink);
+}
+
+.copy-hint {
+  font-family: 'Caveat', cursive;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.room-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  border-color: var(--ink);
+  font-size: 0.85rem;
+  padding: 4px 10px;
+}
+
+.lobby-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .lobby-body { grid-template-columns: 1fr; }
+}
+
+.lobby-panel {
+  height: fit-content;
+}
+
+.panel-title {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  border-bottom: 2px dashed #e0d8c8;
+  padding-bottom: 10px;
+}
+
+/* Players */
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: var(--paper);
+  border: 2px solid #e8e0cc;
+  border-radius: 10px;
+  animation: pop 0.3s ease forwards;
+}
+
+.player-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.player-name { font-size: 1.1rem; }
+
+.admin-badge {
+  background: var(--yellow);
+  font-size: 0.75rem;
+  padding: 2px 7px;
+}
+
+.you-badge {
+  background: var(--green);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 7px;
+}
+
+.waiting-slot {
+  color: #aaa;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+@keyframes ellipsis {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+.dots {
+  display: inline-block;
+  width: 24px;
+}
+
+/* Songs */
+.submitted-songs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.song-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f0fff4;
+  border: 2px solid #4caf82;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.song-num { font-size: 1rem; color: #666; }
+.song-url { flex: 1; color: #555; font-size: 0.8rem; word-break: break-all; }
+.song-check { font-size: 1rem; }
+
+.submit-song-btn {
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.song-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.song-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-more-btn {
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  background: none;
+  border: 2px dashed var(--blue);
+  border-radius: 8px;
+  color: var(--blue);
+  padding: 6px 12px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.song-form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.all-done {
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 12px;
+  background: #f0fff4;
+  border: 2px solid #4caf82;
+  border-radius: 10px;
+}
+
+/* Footer */
+.lobby-footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.start-hint {
+  font-size: 1rem;
+  color: #888;
+  max-width: 400px;
+}
+
+.start-game-btn {
+  font-size: 1.4rem;
+  padding: 14px 40px;
+}
+
+.waiting-text {
+  font-size: 1.3rem;
+  color: #888;
+}
+
+.error-msg {
+  font-family: 'Caveat', cursive;
+  color: var(--red);
+  font-size: 1.1rem;
+  margin-top: 8px;
+  text-align: center;
+  background: #fff0ef;
+  border: 2px dashed var(--red);
+  border-radius: 8px;
+  padding: 8px 12px;
+}

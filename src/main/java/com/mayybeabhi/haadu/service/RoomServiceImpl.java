@@ -101,7 +101,9 @@ public class RoomServiceImpl implements RoomService{
       player.setScore(0);
 
       roomPlayerRepository.save(player);
-      return room;
+      
+    gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.PLAYER_JOINED, Map.of("userId", userID)));
+    return room;
     }
     
     @Override
