@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --cream: #fdf6e3;
+  --paper: #fffbf0;
+  --ink: #2d2416;
+  --red: #e8453c;
+  --yellow: #f7c948;
+  --green: #4caf82;
+  --blue: #3d7fe8;
+  --purple: #9b59b6;
+  --orange: #f39c12;
+  --pink: #e91e8c;
+  --shadow: rgba(45, 36, 22, 0.15);
+  --border: 3px solid var(--ink);
+  --radius: 16px;
+}
