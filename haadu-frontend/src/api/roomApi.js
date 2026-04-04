@@ -14,3 +14,13 @@ export async function joinRoom(roomCode,userId){
     const res=await client.post(`/rooms/${roomCode}/join`,{userId})
     return res.data
 }
+
+export async function getRoomPlayers(roomCode) {
+  const res = await client.get(`/rooms/${roomCode}/players`)
+  return res.data
+}
+
+export async function getRoomDetails(roomCode) {
+  const res = await client.get(`/rooms/${roomCode}`)
+  return res.data
+}
