@@ -1,71 +1,152 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
-import { submitSong } from '../../api/songApi'
+import { submitSong, getRoomSongs } from '../../api/songApi'
 
-export default function SongSubmissionPanel({ roomCode, userId, onSubmitted }) {
-  const [songs, setSongs] = useState([''])
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
+export default function SongSubmissionPanel({ roomCode, userId, songCount = 1, onSubmitted }) {
+  const [songs, setSongs] = useState(() => Array(songCount).fill(''))
+  const [statuses, setStatuses] = useState(() => Array(songCount).fill(null))
+  const [submittedUrls, setSubmittedUrls] = useState(() => Array(songCount).fill(null))
+  const [loadingIndex, setLoadingIndex] = useState(null)
+  const [fetchError, setFetchError] = useState('')
+
+  // load previously submitted songs on mount or when userId/songCount changes
+  useEffect(() => {
+    if (!userId || !roomCode) return
+
+    const loadExisting = async () => {
+      try {
+        const existing = await getRoomSongs(roomCode, userId)
+        // existing is expected to be an array of { youtubeUrl, ... }
+        const urls = Array(songCount).fill('')
+        const newStatuses = Array(songCount).fill(null)
+        const newSubmittedUrls = Array(songCount).fill(null)
+
+        existing.forEach((song, i) => {
+          if (i < songCount) {
+            urls[i] = song.youtubeUrl ?? ''
+            newStatuses[i] = 'success'
+            newSubmittedUrls[i] = song.youtubeUrl ?? ''
+          }
+        })
+
+        setSongs(urls)
+        setStatuses(newStatuses)
+        setSubmittedUrls(newSubmittedUrls)
+      } catch (e) {
+        // if endpoint doesn't exist or returns empty, just reset
+        setSongs(Array(songCount).fill(''))
+        setStatuses(Array(songCount).fill(null))
+        setSubmittedUrls(Array(songCount).fill(null))
+        setFetchError('')
+      }
+    }
+
+    loadExisting()
+  }, [roomCode, userId, songCount])
 
   const updateSong = (index, value) => {
+    if (statuses[index] === 'success') return
     const next = [...songs]
     next[index] = value
     setSongs(next)
-  }
-
-  const addSongField = () => {
-    setSongs((prev) => [...prev, ''])
-  }
-
-  const handleSubmit = async () => {
-    setLoading(true)
-    setError('')
-    setMessage('')
-
-    try {
-      for (const songUrl of songs.filter(Boolean)) {
-        await submitSong(roomCode, {
-          userId,
-          youtubeUrl: songUrl,
-        })
-      }
-
-      setMessage('Songs submitted successfully 🎵')
-      onSubmitted?.()
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to submit songs')
-    } finally {
-      setLoading(false)
+    if (statuses[index] === 'error') {
+      const nextStatuses = [...statuses]
+      nextStatuses[index] = null
+      setStatuses(nextStatuses)
     }
   }
+
+  const handleEdit = (index) => {
+    const nextStatuses = [...statuses]
+    nextStatuses[index] = null
+    setStatuses(nextStatuses)
+  }
+
+  const handleSubmitOne = async (index) => {
+    const url = songs[index]?.trim()
+    if (!url) return
+
+    setLoadingIndex(index)
+    const nextStatuses = [...statuses]
+
+    try {
+      await submitSong(roomCode, { userId, youtubeUrl: url })
+      nextStatuses[index] = 'success'
+      const nextSubmittedUrls = [...submittedUrls]
+      nextSubmittedUrls[index] = url
+      setSubmittedUrls(nextSubmittedUrls)
+      setTimeout(() => onSubmitted?.(), 300)
+    } catch (e) {
+      nextStatuses[index] = 'error'
+      console.error('Submit error:', e?.response?.data || e.message)
+    } finally {
+      setStatuses([...nextStatuses])
+      setLoadingIndex(null)
+    }
+  }
+
+  const isSubmitted = (index) => statuses[index] === 'success'
+  const isSameAsSubmitted = (index) => songs[index]?.trim() === submittedUrls[index]
+  const isBusy = loadingIndex !== null
 
   return (
     <Card>
       <div className="section-title">🎶 submit songs</div>
+      {fetchError && <div className="error-text">{fetchError}</div>}
       <div className="stack" style={{ marginTop: 16 }}>
         {songs.map((song, i) => (
-          <Input
-            key={i}
-            placeholder={`Paste song URL ${i + 1}`}
-            value={song}
-            onChange={(e) => updateSong(i, e.target.value)}
-          />
+          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <Input
+                placeholder={`Paste song URL ${i + 1}`}
+                value={song}
+                onChange={(e) => updateSong(i, e.target.value)}
+                disabled={isSubmitted(i) || isBusy}
+                style={{
+                  borderColor:
+                    statuses[i] === 'success'
+                      ? '#4caf82'
+                      : statuses[i] === 'error'
+                      ? '#e8453c'
+                      : undefined,
+                  opacity: isSubmitted(i) ? 0.6 : 1,
+                  cursor: isSubmitted(i) ? 'not-allowed' : 'text',
+                }}
+              />
+            </div>
+
+            {isSubmitted(i) ? (
+              <Button
+                color="yellow"
+                onClick={() => handleEdit(i)}
+                disabled={isBusy}
+                style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+              >
+                ✏️ edit
+              </Button>
+            ) : (
+              <Button
+                color={statuses[i] === 'error' ? 'red' : 'green'}
+                onClick={() => handleSubmitOne(i)}
+                disabled={
+                  !songs[i]?.trim() ||
+                  loadingIndex === i ||
+                  isBusy ||
+                  isSameAsSubmitted(i)
+                }
+                style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+              >
+                {loadingIndex === i
+                  ? '...'
+                  : statuses[i] === 'error'
+                  ? '✗ retry'
+                  : 'submit'}
+              </Button>
+            )}
+          </div>
         ))}
-
-        <div className="row">
-          <Button color="yellow" onClick={addSongField}>
-            + add another
-          </Button>
-          <Button color="green" onClick={handleSubmit} disabled={loading}>
-            {loading ? 'submitting...' : 'submit songs'}
-          </Button>
-        </div>
-
-        {message && <div className="success-text">{message}</div>}
-        {error && <div className="error-text">{error}</div>}
       </div>
     </Card>
   )

@@ -6,7 +6,7 @@ import com.mayybeabhi.haadu.entity.SongSubmission;
 import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
 import com.mayybeabhi.haadu.service.SongSubmissionService;
 
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +34,11 @@ public class SongSubmissionController {
         songSubmissionRepository.findById(UUID.fromString(songId))
             .orElseThrow(() -> new RuntimeException("Song not found"))
     );
-}
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SongSubmission>> getUserRoomSongs(@PathVariable String roomCode, @RequestParam String userId){
+       List<SongSubmission> list= songSubmissionService.getUserRoomSongs(roomCode,userId);
+       return ResponseEntity.ok(list);
+    }
 }

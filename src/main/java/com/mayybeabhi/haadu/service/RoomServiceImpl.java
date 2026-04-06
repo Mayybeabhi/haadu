@@ -311,8 +311,8 @@ public class RoomServiceImpl implements RoomService{
         List<RoomPlayer> players= roomPlayerRepository.findByRoomId(room.getId());
         return players.stream().map(p->{
             User user= userRepository.findById(p.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
-
-            return new RoomPlayerResponse(user.getId(),user.getUsername(),room.getAdminUserId().equals(user.getId()));
+            long songsSubmitted= songSubmissionRepository.countByRoomIdAndUserId(room.getId(), user.getId());
+            return new RoomPlayerResponse(user.getId(),user.getUsername(),room.getAdminUserId().equals(user.getId()),songsSubmitted);
 
         }).toList();
     }

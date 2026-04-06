@@ -27,6 +27,7 @@ export default function LobbyPage() {
         getRoomDetails(roomCode),
         getRoomPlayers(roomCode),
       ])
+
       setRoom(roomData)
       setPlayers(playerData)
     } catch (e) {
@@ -94,9 +95,11 @@ export default function LobbyPage() {
       <div className="two-col">
         <div className="stack">
           <PlayerList players={players} currentUserId={user?.id} />
+
           <SongSubmissionPanel
             roomCode={roomCode}
             userId={user?.id}
+            songCount={room?.songCount ?? 1}
             onSubmitted={loadData}
           />
         </div>
