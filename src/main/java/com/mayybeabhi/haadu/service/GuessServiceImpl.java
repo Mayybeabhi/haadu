@@ -73,7 +73,7 @@ public class GuessServiceImpl implements GuessService{
         guess.setRoundId(roundUUID);
         guessRepository.save(guess);
 
-        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.GUESS_SUBMITTED, Map.of("userId",guessingUserId)));
+        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.GUESS_SUBMITTED,Map.of( "guessingUserId", guessingUserId, "guessedUserId", guessedUserId)));
 
     }
 }

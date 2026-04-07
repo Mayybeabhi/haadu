@@ -5,6 +5,7 @@ import RoomChoicePage from './pages/RoomChoicePage'
 import CreateRoomPage from './pages/CreateRoomPage'
 import JoinRoomPage from './pages/JoinRoomPage'
 import LobbyPage from './pages/LobbyPage'
+import GamePage from './pages/GamePage'
 export default function App(){
     return(
         <Routes>
@@ -14,6 +15,7 @@ export default function App(){
             <Route path="/rooms/create" element={<CreateRoomPage />} />
             <Route path="/rooms/join" element={<JoinRoomPage />} />
             <Route path="/room/:roomCode" element={<LobbyPage />} />
+            <Route path="/room/:roomCode/game" element={<GamePage />} />
         </Routes>
     )
 }

@@ -71,4 +71,9 @@ public class RoomController {
         return roomService.getPlayers(roomCode);
     }
 
+    @GetMapping("/{roomCode}/state")
+    public GameStateResponse getGameState(@PathVariable String roomCode) {
+        return roomService.getGameState(roomCode);
+}
+
 }

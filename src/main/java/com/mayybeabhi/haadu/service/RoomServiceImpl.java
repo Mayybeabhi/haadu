@@ -10,6 +10,8 @@ import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.mayybeabhi.haadu.dto.GameStateResponse;
+import com.mayybeabhi.haadu.dto.GuessResponse;
 
 import java.time.Instant;
 import java.util.*;
@@ -180,6 +182,8 @@ public class RoomServiceImpl implements RoomService{
 
         room.setStatus(RoomStatus.PLAYING);
         roomRepository.save(room);
+
+        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.GAME_STARTED, Map.of()));
     }
 
     @Override
@@ -225,8 +229,7 @@ public class RoomServiceImpl implements RoomService{
 
         roundRepository.save(round);
 
-        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.ROUND_STARTED, Map.of("roundNumber",roundNumber,"songId",selectedSong.getId())));
-
+        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.ROUND_STARTED,Map.of("roundNumber", roundNumber,"roundId", round.getId(),"songId", selectedSong.getId())));
     }
 
     @Override
@@ -316,5 +319,67 @@ public class RoomServiceImpl implements RoomService{
 
         }).toList();
     }
+
+    @Override
+public GameStateResponse getGameState(String roomCode) {
+    Room room = roomRepository.findByRoomCode(roomCode)
+            .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+
+    List<Round> rounds = roundRepository.findByRoomId(room.getId());
+
+    if (rounds.isEmpty()) {
+        return new GameStateResponse(
+                room.getStatus(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                List.of()
+        );
+    }
+
+    Round latestRound = rounds.stream()
+            .max(Comparator.comparing(Round::getRoundNumber))
+            .orElse(null);
+
+    if (latestRound == null) {
+        return new GameStateResponse(
+                room.getStatus(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                List.of()
+        );
+    }
+
+    List<GuessResponse> guesses = guessRepository.findByRoundId(latestRound.getId())
+            .stream()
+            .map(g -> new GuessResponse(g.getGuessingUserId(), g.getGuessedUserId()))
+            .toList();
+
+    UUID revealedOwnerId = null;
+
+    if (latestRound.getStatus() == RoundStatus.REVEALED && latestRound.getSongSubmissionId() != null) {
+        SongSubmission song = songSubmissionRepository.findById(latestRound.getSongSubmissionId())
+                .orElse(null);
+
+        if (song != null) {
+            revealedOwnerId = song.getUserId();
+        }
+    }
+
+    return new GameStateResponse(
+            room.getStatus(),
+            latestRound.getId(),
+            latestRound.getRoundNumber(),
+            latestRound.getStatus(),
+            latestRound.getSongSubmissionId(),
+            revealedOwnerId,
+            guesses
+    );
+}
 
 }
