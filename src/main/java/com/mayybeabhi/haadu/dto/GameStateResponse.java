@@ -1,18 +1,37 @@
 package com.mayybeabhi.haadu.dto;
 
-import com.mayybeabhi.haadu.entity.RoomStatus;
-import com.mayybeabhi.haadu.entity.RoundStatus;
-
 import java.util.List;
 import java.util.UUID;
 
-public record GameStateResponse(
-        RoomStatus roomStatus,
-        UUID currentRoundId,
-        Integer roundNumber,
-        RoundStatus roundStatus,
-        UUID songId,
-        UUID revealedOwnerId,
-        List<GuessResponse> guesses
-) {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import com.mayybeabhi.haadu.dto.PlayerGameStateDto;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class GameStateResponse {
+    private String roomCode;
+    private String roomStatus;     // WAITING, IN_PROGRESS, FINISHED
+    private String phase;          // LOBBY, WAITING_ROUND, PLAYING, REVEALED, FINISHED
+
+    private Integer roundNumber;
+    private UUID currentRoundId;
+    private String roundStatus;    // WAITING, PLAYING, REVEALED
+    private UUID songId;
+    private String currentSongUrl; // send only if round is active
+    private UUID revealedOwnerId;  // null until revealed
+
+    private Integer maxPlayers;
+    private Integer songCount;
+    private Boolean breakTimeEnabled;
+    private Integer breakTimeSeconds;
+    private Boolean roundTimeEnabled;
+    private Integer roundTimeSeconds;
+
+    private List<PlayerGameStateDto> players;
+    private List<GuessResponse> guesses;
 }

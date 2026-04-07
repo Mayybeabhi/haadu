@@ -1,5 +1,6 @@
 package com.mayybeabhi.haadu.repository;
 
+import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.SongSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,5 +26,6 @@ public interface SongSubmissionRepository extends JpaRepository<SongSubmission, 
       )
 """) List<SongSubmission> findUnusedSongsByRoomId(UUID roomId);
     List<SongSubmission> findByRoomIdAndUserId(UUID roomId,UUID userId);
-
+    List<SongSubmission> findByRoomId(UUID roomId);
+    
 }

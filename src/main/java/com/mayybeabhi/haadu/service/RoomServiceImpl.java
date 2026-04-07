@@ -12,9 +12,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.mayybeabhi.haadu.dto.GameStateResponse;
 import com.mayybeabhi.haadu.dto.GuessResponse;
+import com.mayybeabhi.haadu.dto.PlayerGameStateDto;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -229,8 +231,16 @@ public class RoomServiceImpl implements RoomService{
 
         roundRepository.save(round);
 
-        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.ROUND_STARTED,Map.of("roundNumber", roundNumber,"roundId", round.getId(),"songId", selectedSong.getId())));
-    }
+        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(
+    GameEventType.ROUND_STARTED,
+    Map.of(
+        "roundNumber", roundNumber,
+        "roundId", round.getId(),
+        "songId", selectedSong.getId(),
+        "youtubeUrl", selectedSong.getYoutubeUrl()
+    )
+));
+  }
 
     @Override
     @Transactional
@@ -321,65 +331,139 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-public GameStateResponse getGameState(String roomCode) {
+@Transactional
+public GameStateResponse getRoomState(String roomCode) {
     Room room = roomRepository.findByRoomCode(roomCode)
             .orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
-    List<Round> rounds = roundRepository.findByRoomId(room.getId());
+    UUID roomId = room.getId();
 
-    if (rounds.isEmpty()) {
-        return new GameStateResponse(
-                room.getStatus(),
-                null,
-                null,
-                null,
-                null,
-                null,
-                List.of()
-        );
+    List<RoomPlayer> roomPlayers = roomPlayerRepository.findByRoomId(roomId);
+
+    Optional<Round> activeRoundOpt = roundRepository.findByRoomIdAndStatus(roomId, RoundStatus.PLAYING);
+    Optional<Round> latestRoundOpt = roundRepository.findTopByRoomIdOrderByRoundNumberDesc(roomId);
+
+    Optional<Round> currentRoundOpt = activeRoundOpt.isPresent() ? activeRoundOpt : latestRoundOpt;
+
+Round currentRound = currentRoundOpt.orElse(null);
+
+List<Guess> guesses = currentRoundOpt
+        .map(round -> guessRepository.findByRoundId(round.getId()))
+        .orElseGet(Collections::emptyList);
+
+    Map<UUID, Guess> guessByUserId = new HashMap<>();
+    for (Guess guess : guesses) {
+        guessByUserId.put(guess.getGuessingUserId(), guess);
     }
 
-    Round latestRound = rounds.stream()
-            .max(Comparator.comparing(Round::getRoundNumber))
-            .orElse(null);
+    List<PlayerGameStateDto> playerDtos = roomPlayers.stream().map(rp -> {
+        UUID userId = rp.getUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-    if (latestRound == null) {
-        return new GameStateResponse(
-                room.getStatus(),
-                null,
-                null,
-                null,
-                null,
-                null,
-                List.of()
-        );
-    }
+        Guess guess = guessByUserId.get(userId);
+        long songsSubmitted = songSubmissionRepository.countByRoomIdAndUserId(roomId, userId);
 
-    List<GuessResponse> guesses = guessRepository.findByRoundId(latestRound.getId())
-            .stream()
-            .map(g -> new GuessResponse(g.getGuessingUserId(), g.getGuessedUserId()))
-            .toList();
+        return PlayerGameStateDto.builder()
+                .userId(userId)
+                .username(user.getUsername())
+                .isAdmin(room.getAdminUserId().equals(userId))
+                .songsSubmitted((int) songsSubmitted)
+                .guessSubmitted(guess != null)
+                .guessTargetUserId(guess != null ? guess.getGuessedUserId() : null)
+                .build();
+    }).toList();
 
+    List<GuessResponse> guessDtos = guesses.stream().map(g ->
+            new GuessResponse(g.getGuessingUserId(), g.getGuessedUserId())
+    ).toList();
+
+    return buildGameStateResponse(room, currentRound, playerDtos, guessDtos);
+}
+
+private GameStateResponse buildGameStateResponse(
+        Room room,
+        Round currentRound,
+        List<PlayerGameStateDto> playerDtos,
+        List<GuessResponse> guessDtos
+) {
+    String phase = determinePhase(room, currentRound);
+
+    UUID songId = null;
+    String currentSongUrl = null;
     UUID revealedOwnerId = null;
+    Integer roundNumber = null;
+    UUID currentRoundId = null;
+    String roundStatus = null;
 
-    if (latestRound.getStatus() == RoundStatus.REVEALED && latestRound.getSongSubmissionId() != null) {
-        SongSubmission song = songSubmissionRepository.findById(latestRound.getSongSubmissionId())
-                .orElse(null);
+    if (currentRound != null) {
+        roundNumber = currentRound.getRoundNumber();
+        currentRoundId = currentRound.getId();
+        roundStatus = currentRound.getStatus().name();
 
-        if (song != null) {
-            revealedOwnerId = song.getUserId();
+        if (currentRound.getSongSubmissionId() != null) {
+            SongSubmission songSubmission = songSubmissionRepository
+                    .findById(currentRound.getSongSubmissionId())
+                    .orElse(null);
+
+            if (songSubmission != null) {
+                songId = songSubmission.getId();
+                currentSongUrl = songSubmission.getYoutubeUrl();
+
+                // anti-cheat: only reveal owner after round is revealed
+                if (currentRound.getStatus() == RoundStatus.REVEALED) {
+                    revealedOwnerId = songSubmission.getUserId();
+                }
+            }
         }
     }
 
-    return new GameStateResponse(
-            room.getStatus(),
-            latestRound.getId(),
-            latestRound.getRoundNumber(),
-            latestRound.getStatus(),
-            latestRound.getSongSubmissionId(),
-            revealedOwnerId,
-            guesses
-    );
+    return GameStateResponse.builder()
+            .roomCode(room.getRoomCode())
+            .roomStatus(room.getStatus().name())
+            .phase(phase)
+
+            .roundNumber(roundNumber)
+            .currentRoundId(currentRoundId)
+            .roundStatus(roundStatus)
+
+            .songId(songId)
+            .currentSongUrl(currentSongUrl)
+            .revealedOwnerId(revealedOwnerId)
+
+            .maxPlayers(room.getMaxPlayers())
+            .songCount(room.getSongCount())
+
+            .breakTimeEnabled(room.isInBetweenRoundTimerEnabled())
+            .breakTimeSeconds(room.getInBetweenRoundTimer())
+
+            .roundTimeEnabled(room.isRoundTimerEnabled())
+            .roundTimeSeconds(room.getRoundTimer())
+
+            .players(playerDtos)
+            .guesses(guessDtos)
+            .build();
+}
+
+private String determinePhase(Room room, Round currentRound) {
+    if (room.getStatus() == RoomStatus.FINISHED) {
+        return "FINISHED";
+    }
+
+    if (room.getStatus() == RoomStatus.WAITING) {
+        return "LOBBY";
+    }
+
+    if (currentRound == null) {
+        return "WAITING_ROUND";
+    }
+
+    return switch (currentRound.getStatus()) {
+        case SUBMISSION -> "WAITING_ROUND";
+        case PLAYING -> "PLAYING";
+        case GUESSING -> "PLAYING";
+        case REVEALED -> "REVEALED";
+    };
 }
 
 }

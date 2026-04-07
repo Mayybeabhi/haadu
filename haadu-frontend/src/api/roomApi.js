@@ -25,7 +25,7 @@ export async function getRoomDetails(roomCode) {
   return res.data
 }
 
-export const getRoomState = async (roomCode) => {
-  const res = await client.get(`/rooms/${roomCode}`)
+export async function getRoomState(roomCode) {
+  const res = await client.get(`/rooms/${roomCode}/state`)
   return res.data
 }

@@ -45,31 +45,34 @@ export default function GamePage() {
       return
     }
 
+    setPlayers(state.players || [])
+
     if (!state.currentRoundId) {
       setPhase('waiting')
+      setCurrentRound(null)
+      setCurrentSongUrl('')
+      setAllGuesses([])
+      setMyGuess(null)
+      setRevealedOwner(null)
+      setRoundNumber(0)
       return
     }
 
     setRoundNumber(state.roundNumber || 0)
+
     setCurrentRound({
       id: state.currentRoundId,
       songId: state.songId,
     })
+
+    setCurrentSongUrl(state.currentSongUrl || '')
     setAllGuesses(state.guesses || [])
+
     const existingMyGuess = (state.guesses || []).find(
-  (g) => String(g.guessingUserId) === String(user?.id)
-)
+      (g) => String(g.guessingUserId) === String(user?.id)
+    )
 
-setMyGuess(existingMyGuess?.guessedUserId || null)
-
-    if (state.songId) {
-      try {
-        const song = await getSongById(roomCode, state.songId)
-        setCurrentSongUrl(song?.youtubeUrl || '')
-      } catch {
-        setCurrentSongUrl('')
-      }
-    }
+    setMyGuess(existingMyGuess?.guessedUserId || null)
 
     if (state.roundStatus === 'PLAYING') {
       setPhase('playing')
@@ -80,18 +83,15 @@ setMyGuess(existingMyGuess?.guessedUserId || null)
       loadScores()
     } else {
       setPhase('waiting')
+      setRevealedOwner(null)
     }
   } catch (e) {
     console.error('Failed to hydrate game state', e)
+    setError('Could not restore game state')
   }
 }
 
-  const loadPlayers = async () => {
-    try {
-      const data = await getRoomPlayers(roomCode)
-      setPlayers(data)
-    } catch {}
-  }
+  
 
   const loadScores = async (mode = scoringMode) => {
     try {
@@ -106,26 +106,21 @@ setMyGuess(existingMyGuess?.guessedUserId || null)
       return
     }
 
-    loadPlayers()
+    
     hydrateGameState()
 
     socketRef.current = createRoomSocket(roomCode, async (event) => {
       if (event.type === 'ROUND_STARTED') {
-        const { roundNumber, roundId, songId } = event.payload
-        setPhase('playing')
-        setRoundNumber(roundNumber)
-        setCurrentRound({ id: roundId, songId })
-        setMyGuess(null)
-        setAllGuesses([])
-        setRevealedOwner(null)
+  const { roundNumber, roundId, songId, youtubeUrl } = event.payload
 
-        try {
-          const song = await getSongById(roomCode, songId)
-          setCurrentSongUrl(song?.youtubeUrl || '')
-        } catch {
-          setCurrentSongUrl('')
-        }
-      }
+  setPhase('playing')
+  setRoundNumber(roundNumber)
+  setCurrentRound({ id: roundId, songId })
+  setCurrentSongUrl(youtubeUrl || '')
+  setMyGuess(null)
+  setAllGuesses([])
+  setRevealedOwner(null)
+}
 
       if (event.type === 'GUESS_SUBMITTED') {
   setAllGuesses((prev) => {

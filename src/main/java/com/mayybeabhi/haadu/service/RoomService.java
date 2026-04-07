@@ -17,5 +17,5 @@ public interface RoomService {
     void endRound(String roomCode, String adminUserId, String roundId);
     void endGame(String roomCode, String adminUserId);
     List<RoomPlayerResponse> getPlayers(String roomCode);
-    GameStateResponse getGameState(String roomCode);
+    GameStateResponse getRoomState(String roomCode);
 }

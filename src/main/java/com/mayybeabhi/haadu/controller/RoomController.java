@@ -72,8 +72,8 @@ public class RoomController {
     }
 
     @GetMapping("/{roomCode}/state")
-    public GameStateResponse getGameState(@PathVariable String roomCode) {
-        return roomService.getGameState(roomCode);
+public ResponseEntity<GameStateResponse> getRoomState(@PathVariable String roomCode) {
+    return ResponseEntity.ok(roomService.getRoomState(roomCode));
 }
 
 }

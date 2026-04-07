@@ -6,7 +6,7 @@ import PlayerList from '../components/room/PlayerList'
 import RoomSettingsCard from '../components/room/RoomSettingsCard'
 import SongSubmissionPanel from '../components/room/SongSubmissionPanel'
 import { getGameState } from '../store/gameStore'
-import { getRoomPlayers, getRoomDetails } from '../api/roomApi'
+import { getRoomState } from '../api/roomApi'
 import { startGame } from '../api/gameApi'
 import { createRoomSocket } from '../realtime/socket'
 
@@ -22,18 +22,33 @@ export default function LobbyPage() {
   const socketRef = useRef(null)
 
   const loadData = async () => {
-    try {
-      const [roomData, playerData] = await Promise.all([
-        getRoomDetails(roomCode),
-        getRoomPlayers(roomCode),
-      ])
+  try {
+    const state = await getRoomState(roomCode)
 
-      setRoom(roomData)
-      setPlayers(playerData)
-    } catch (e) {
-      setError(e.response?.data?.message || 'Could not load room')
+    setRoom({
+      roomCode: state.roomCode,
+      maxPlayers: state.maxPlayers,
+      songCount: state.songCount,
+      isInBetweenRoundTimerEnabled: state.breakTimeEnabled,
+      inBetweenRoundTimer: state.breakTimeSeconds,
+      isRoundTimerEnabled: state.roundTimeEnabled,
+      roundTimer: state.roundTimeSeconds,
+      status: state.roomStatus,
+    })
+
+    setPlayers(state.players || [])
+
+    if (state.roomStatus === 'PLAYING' || state.currentRoundId) {
+      navigate(`/room/${roomCode}/game`)
     }
+
+    if (state.roomStatus === 'FINISHED') {
+      navigate(`/room/${roomCode}/results`)
+    }
+  } catch (e) {
+    setError(e.response?.data?.message || 'Could not load room')
   }
+}
 
   useEffect(() => {
     if (!user) {
