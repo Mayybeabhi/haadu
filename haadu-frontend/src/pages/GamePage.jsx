@@ -312,16 +312,17 @@ export default function GamePage() {
               ?.username || 'Unknown'}
           </div>
 
-          {isAdmin && (
+          
             <div className="row">
+              {isAdmin && (
               <Button color="green" onClick={handleStartRound} disabled={loading}>
                 ▶️ next round
-              </Button>
+              </Button>)}
               <Button color="purple" onClick={handleEndGame} disabled={loading}>
                 🏆 reveal winner
               </Button>
             </div>
-          )}
+          
         </Card>
       )}
     </div>

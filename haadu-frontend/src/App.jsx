@@ -6,6 +6,7 @@ import CreateRoomPage from './pages/CreateRoomPage'
 import JoinRoomPage from './pages/JoinRoomPage'
 import LobbyPage from './pages/LobbyPage'
 import GamePage from './pages/GamePage'
+import ResultsPage from './pages/ResultsPage'
 export default function App(){
     return(
         <Routes>
@@ -16,6 +17,8 @@ export default function App(){
             <Route path="/rooms/join" element={<JoinRoomPage />} />
             <Route path="/room/:roomCode" element={<LobbyPage />} />
             <Route path="/room/:roomCode/game" element={<GamePage />} />
+            <Route path="/room/:roomCode/results" element={<ResultsPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     )
 }
