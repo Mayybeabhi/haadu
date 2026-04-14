@@ -1,6 +1,5 @@
 package com.mayybeabhi.haadu.repository;
 
-import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.SongSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

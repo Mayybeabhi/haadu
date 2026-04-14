@@ -1,6 +1,5 @@
 package com.mayybeabhi.haadu.repository;
 
-import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
 import com.mayybeabhi.haadu.entity.RoundStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

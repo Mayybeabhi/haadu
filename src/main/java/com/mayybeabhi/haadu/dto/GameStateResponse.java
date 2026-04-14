@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.mayybeabhi.haadu.dto.PlayerGameStateDto;
 
 @Data
 @Builder

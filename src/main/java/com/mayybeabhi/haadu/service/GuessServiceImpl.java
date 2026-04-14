@@ -18,17 +18,13 @@ import java.util.UUID;
 public class GuessServiceImpl implements GuessService{
     private final RoomRepository roomRepository;
     private final RoomPlayerRepository roomPlayerRepository;
-    private final UserRepository userRepository;
-    private final SongSubmissionRepository songSubmissionRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
     private final GameEventPublisher gameEventPublisher;
 
-    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository, UserRepository userRepository, SongSubmissionRepository songSubmissionRepository, RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
+    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,  RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
-        this.userRepository=userRepository;
-        this.songSubmissionRepository=songSubmissionRepository;
         this.roundRepository=roundRepository;
         this.guessRepository=guessRepository;
         this.gameEventPublisher=gameEventPublisher;

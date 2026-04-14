@@ -40,3 +40,5 @@ build/
 
 # Env / secrets
 .env
+
+testFrontend/
