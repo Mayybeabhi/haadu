@@ -6,9 +6,10 @@ import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.dto.GameStateResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface RoomService {
-    Room createRoom(String adminUserId);
+    Room createRoom(UUID adminUserId);
     Room getRoomByCode(String roomCode);
     Room joinRoom(String roomCode,String userId);
     Room updateRoomSettings(String roonCode, UpdateRoomSettingsRequest request);

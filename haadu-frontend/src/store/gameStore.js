@@ -2,6 +2,7 @@ const STORAGE_KEY = 'haadu_state'
 
 const defaultState = {
   user: null,
+  token: null,
   room: null,
   isAdmin: false,
   players: [],

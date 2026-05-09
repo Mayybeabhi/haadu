@@ -26,7 +26,7 @@ export default function CreateRoomPage() {
     setError('')
 
     try {
-        const roomCode=await createRoom(user.id)
+        const roomCode=await createRoom()
         console.log(roomCode)
       const room = await updateRoomSettings(roomCode,{
         adminUserId: user.id,

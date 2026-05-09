@@ -1,7 +1,7 @@
 import client from "./client";
 
-export async function createRoom(adminUserId){
-   const res= await client.post('/rooms',{adminUserId})
+export async function createRoom(){
+   const res= await client.post('/rooms')
    return res.data
 }
 

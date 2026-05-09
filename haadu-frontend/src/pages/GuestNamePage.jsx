@@ -20,7 +20,16 @@ export default function GuestNamePage() {
 
     try {
       const user = await createGuestUser(name.trim())
-      setGameState({ user, isAdmin: false, room: null, players: [] })
+      setGameState({
+        user: {
+          id: user.id,
+          username: user.username,
+        },
+        token: user.token,
+        isAdmin: false,
+        room: null,
+        players: [],
+      })
       navigate('/rooms')
     } catch (e) {
       setError(e.response?.data?.message || 'Could not create guest user')

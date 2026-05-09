@@ -2,6 +2,7 @@ package com.mayybeabhi.haadu.controller;
 
 import com.mayybeabhi.haadu.dto.*;
 import com.mayybeabhi.haadu.entity.Room;
+import com.mayybeabhi.haadu.security.SecurityUtils;
 import com.mayybeabhi.haadu.service.RoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createRoom(@RequestBody CreateRoomRequest request){
-        Room room= roomService.createRoom(request.getAdminUserId());
+    public ResponseEntity<String> createRoom(){
+        Room room= roomService.createRoom(SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok(room.getRoomCode());
     }
 

@@ -40,16 +40,16 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public Room createRoom(String adminUserId){
+    public Room createRoom(UUID adminUserId){
 
-        if(!userRepository.existsById(UUID.fromString(adminUserId))){
+        if(!userRepository.existsById(adminUserId)){
             throw new UserNotFoundException("User not found!");
         }
 
         Room room = new Room();
 
         room.setRoomCode(generateRoomCode());
-        room.setAdminUserId(UUID.fromString(adminUserId));
+        room.setAdminUserId(adminUserId);
         room.setMaxPlayers(2);
         room.setSongCount(4);
         room.setStatus(RoomStatus.WAITING);
@@ -61,7 +61,7 @@ public class RoomServiceImpl implements RoomService{
 
         RoomPlayer adminPlayer=new RoomPlayer();
         adminPlayer.setRoomId(room.getId());
-        adminPlayer.setUserId(UUID.fromString(adminUserId));
+        adminPlayer.setUserId(adminUserId);
         adminPlayer.setScore(0);
         roomPlayerRepository.save(adminPlayer);
         return savedRoom;
