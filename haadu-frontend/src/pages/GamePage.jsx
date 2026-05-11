@@ -158,7 +158,7 @@ export default function GamePage() {
     setLoading(true)
     setError('')
     try {
-      await startRound(roomCode, user.id)
+      await startRound(roomCode)
     } catch (e) {
       setError(e.response?.data?.message || 'Could not start round')
     } finally {
@@ -178,7 +178,6 @@ export default function GamePage() {
   setError('')
   try {
     await submitGuess(roomCode, currentRound.id, {
-      guessingUserId: user.id,
       guessedUserId,
     })
     setMyGuess(guessedUserId)
@@ -195,7 +194,7 @@ export default function GamePage() {
     setLoading(true)
     setError('')
     try {
-      await endRound(roomCode, currentRound.id, user.id)
+      await endRound(roomCode, currentRound.id)
     } catch (e) {
       setError(e.response?.data?.message || 'Could not end round')
     } finally {
@@ -207,7 +206,7 @@ export default function GamePage() {
     setLoading(true)
     setError('')
     try {
-      await endGame(roomCode, user.id)
+      await endGame(roomCode)
       navigate(`/room/${roomCode}/results`)
     } catch (e) {
       setError(e.response?.data?.message || 'Could not end game')

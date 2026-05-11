@@ -30,11 +30,10 @@ public class GuessServiceImpl implements GuessService{
         this.gameEventPublisher=gameEventPublisher;
     }
 
-    public void submitGuess(String roomCode,String roundId,String guessingUserId, String guessedUserId){
+    public void submitGuess(String roomCode,String roundId,UUID guessingUserId, String guessedUserId){
 
         Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
         UUID roundUUID=UUID.fromString(roundId);
-        UUID guessingUserUUID=UUID.fromString(guessingUserId);
         UUID guessedUserUUID=UUID.fromString(guessedUserId);
         Round round=roundRepository.findById(roundUUID).orElseThrow(()-> new RoundNotFoundException("Round not found"));
 
@@ -46,7 +45,7 @@ public class GuessServiceImpl implements GuessService{
             throw new InvalidGameStatusException("Invalid round");
         }
 
-        if(!roomPlayerRepository.existsByRoomIdAndUserId(room.getId(),guessingUserUUID)){
+        if(!roomPlayerRepository.existsByRoomIdAndUserId(room.getId(),guessingUserId)){
             throw new UserNotInRoomException("Player is not in the room");
         }
 
@@ -54,7 +53,7 @@ public class GuessServiceImpl implements GuessService{
             throw new UserNotInRoomException("Guessed player is not in the room");
         }
 
-        if(guessRepository.existsByRoundIdAndGuessingUserId(roundUUID,guessingUserUUID)){
+        if(guessRepository.existsByRoundIdAndGuessingUserId(roundUUID,guessingUserId)){
             throw new BusinessRuleException("Player has already guessed");
         }
 
@@ -64,7 +63,7 @@ public class GuessServiceImpl implements GuessService{
 
         Guess guess = new Guess();
 
-        guess.setGuessingUserId(guessingUserUUID);
+        guess.setGuessingUserId(guessingUserId);
         guess.setGuessedUserId(guessedUserUUID);
         guess.setRoundId(roundUUID);
         guessRepository.save(guess);

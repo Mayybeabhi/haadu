@@ -33,10 +33,9 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
 
     @Override
     @Transactional
-    public void submitSong(String roomCode, String userId,String youtubeUrl){
+    public void submitSong(String roomCode, UUID userId,String youtubeUrl){
         UUID roomId=roomRepository.findByRoomCode(roomCode).get().getId();
-        UUID userUUID=UUID.fromString(userId);
-        if (!roomPlayerRepository.existsByRoomIdAndUserId(roomId,userUUID)){
+        if (!roomPlayerRepository.existsByRoomIdAndUserId(roomId,userId)){
             throw new UserNotInRoomException("User is not in the room");
         }
 
@@ -44,17 +43,17 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
             throw new GameAlreadyStartedException("Song submission closed!");
         }
 
-        if (songSubmissionRepository.existsByRoomIdAndUserIdAndYoutubeUrl(roomId,userUUID,youtubeUrl)){
+        if (songSubmissionRepository.existsByRoomIdAndUserIdAndYoutubeUrl(roomId,userId,youtubeUrl)){
             throw new InvalidGameStatusException("Song already submitted");
         }
-        if (songSubmissionRepository.countByRoomIdAndUserId(roomId,userUUID)>=roomRepository.findById(roomId).get().getSongCount()){
+        if (songSubmissionRepository.countByRoomIdAndUserId(roomId,userId)>=roomRepository.findById(roomId).get().getSongCount()){
             throw new InvalidGameStatusException("All songs have been already submitted");
         }
 
         SongSubmission song =new SongSubmission();
 
         song.setRoomId(roomId);
-        song.setUserId(userUUID);
+        song.setUserId(userId);
         song.setYoutubeUrl(youtubeUrl);
 
         songSubmissionRepository.save(song);
@@ -65,10 +64,37 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
 
     @Override
     @Transactional
-    public List<SongSubmission> getUserRoomSongs(String roomCode,String userId){
+    public List<SongSubmission> getUserRoomSongs(String roomCode,UUID userId){
         UUID roomId= roomRepository.findByRoomCode(roomCode).get().getId();
-        UUID userUUID= UUID.fromString(userId);
-        List<SongSubmission> list= songSubmissionRepository.findByRoomIdAndUserId(roomId,userUUID);
+        List<SongSubmission> list= songSubmissionRepository.findByRoomIdAndUserId(roomId,userId);
         return list;
+    }
+
+    @Override
+    @Transactional
+    public void updateSong(String roomCode, UUID songId, UUID userId, String youtubeUrl) {
+
+        UUID roomId = roomRepository.findByRoomCode(roomCode).orElseThrow().getId();
+
+        SongSubmission song = songSubmissionRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+
+        if (!song.getRoomId().equals(roomId)) {
+            throw new RuntimeException("Song not in room");
+        }
+
+        if (!song.getUserId().equals(userId)) {
+            throw new RuntimeException("Cannot edit another user's song");
+        }
+
+        if (!roomRepository.findById(roomId).orElseThrow().getStatus().equals(RoomStatus.WAITING)) {
+
+            throw new GameAlreadyStartedException("Song editing closed!");
+        }
+
+        song.setYoutubeUrl(youtubeUrl);
+
+        songSubmissionRepository.save(song);
+
+        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.SONG_SUBMITTED, Map.of("userId", userId, "roomCode", roomCode)));
     }
 }

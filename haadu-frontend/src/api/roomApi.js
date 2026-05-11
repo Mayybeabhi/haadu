@@ -10,8 +10,8 @@ export async function updateRoomSettings(roomCode,settings){
     return res.data
 }
 
-export async function joinRoom(roomCode,userId){
-    const res=await client.post(`/rooms/${roomCode}/join`,{userId})
+export async function joinRoom(roomCode){
+    const res=await client.post(`/rooms/${roomCode}/join`)
     return res.data
 }
 

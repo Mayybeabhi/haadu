@@ -8,7 +8,6 @@ import { joinRoom } from '../api/roomApi'
 
 export default function JoinRoomPage() {
   const navigate = useNavigate()
-  const { user } = getGameState()
   const [roomCode, setRoomCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -20,7 +19,7 @@ export default function JoinRoomPage() {
     setError('')
 
     try {
-      const room = await joinRoom(roomCode,user.id)
+      const room = await joinRoom(roomCode)
 
       setGameState({ room, isAdmin: false })
       navigate(`/room/${roomCode}`)

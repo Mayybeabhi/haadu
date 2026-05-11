@@ -29,8 +29,8 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/join")
-    public ResponseEntity<String> joinRoom(@PathVariable String roomCode,@RequestBody JoinRoomRequest request){
-        Room room= roomService.joinRoom(roomCode, request.getUserId());
+    public ResponseEntity<String> joinRoom(@PathVariable String roomCode){
+        Room room= roomService.joinRoom(roomCode, SecurityUtils.getCurrentUserId());
          return ResponseEntity.ok(room.getRoomCode());
     }
 
@@ -41,29 +41,26 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/start")
-    public ResponseEntity<?> startGame(@PathVariable String roomCode, @RequestBody StartGameRequest request){
-        roomService.startGame(roomCode, request.getAdminUserId());
+    public ResponseEntity<?> startGame(@PathVariable String roomCode){
+        roomService.startGame(roomCode, SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{roomCode}/rounds/start")
-    public ResponseEntity<?> startRound(@PathVariable String roomCode, @RequestBody StartRoundRequest request){
-        roomService.startRound(roomCode, request.getAdminUserId());
+    public ResponseEntity<?> startRound(@PathVariable String roomCode){
+        roomService.startRound(roomCode, SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{roomCode}/rounds/{roundId}/end")
-    public ResponseEntity<?> endRound(@PathVariable String roomCode,@PathVariable String roundId, @RequestBody EndRoundRequest request){
-        roomService.endRound(roomCode, request.getAdminUserId(), roundId);
+    public ResponseEntity<?> endRound(@PathVariable String roomCode,@PathVariable String roundId){
+        roomService.endRound(roomCode, SecurityUtils.getCurrentUserId(), roundId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{roomCode}/end")
-    public ResponseEntity<?> endGame(
-            @PathVariable String roomCode,
-            @RequestBody EndGameRequest request
-    ) {
-        roomService.endGame(roomCode, request.getAdminUserId());
+    public ResponseEntity<?> endGame(@PathVariable String roomCode) {
+        roomService.endGame(roomCode, SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok().build();
     }
 

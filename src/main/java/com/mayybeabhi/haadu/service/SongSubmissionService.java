@@ -8,6 +8,8 @@ import java.util.*;
 
 @Service
 public interface SongSubmissionService {
-    void submitSong(String roomCode,String userId,String youtubeUrl);
-    List<SongSubmission> getUserRoomSongs(String roomCode,String userId);
+    void submitSong(String roomCode,UUID userId,String youtubeUrl);
+    List<SongSubmission> getUserRoomSongs(String roomCode,UUID userId);
+    void updateSong(String roomCode, UUID songId, UUID userId, String youtubeUrl
+    );
 }

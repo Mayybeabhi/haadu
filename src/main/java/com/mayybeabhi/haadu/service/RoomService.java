@@ -11,12 +11,12 @@ import java.util.UUID;
 public interface RoomService {
     Room createRoom(UUID adminUserId);
     Room getRoomByCode(String roomCode);
-    Room joinRoom(String roomCode,String userId);
+    Room joinRoom(String roomCode,UUID userId);
     Room updateRoomSettings(String roonCode, UpdateRoomSettingsRequest request);
-    void startGame(String roomCode,String adminUserId);
-    void startRound(String roomCode, String adminUserId);
-    void endRound(String roomCode, String adminUserId, String roundId);
-    void endGame(String roomCode, String adminUserId);
+    void startGame(String roomCode,UUID adminUserId);
+    void startRound(String roomCode, UUID adminUserId);
+    void endRound(String roomCode, UUID adminUserId, String roundId);
+    void endGame(String roomCode, UUID adminUserId);
     List<RoomPlayerResponse> getPlayers(String roomCode);
     GameStateResponse getRoomState(String roomCode);
 }

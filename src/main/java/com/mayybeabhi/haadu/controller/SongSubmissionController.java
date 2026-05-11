@@ -2,8 +2,10 @@ package com.mayybeabhi.haadu.controller;
 
 
 import com.mayybeabhi.haadu.dto.SubmitSongRequest;
+import com.mayybeabhi.haadu.dto.UpdateSongRequest;
 import com.mayybeabhi.haadu.entity.SongSubmission;
 import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
+import com.mayybeabhi.haadu.security.SecurityUtils;
 import com.mayybeabhi.haadu.service.SongSubmissionService;
 
 import java.util.*;
@@ -24,7 +26,7 @@ public class SongSubmissionController {
 
     @PostMapping
     public ResponseEntity<Void> submitSong(@PathVariable String roomCode, @RequestBody SubmitSongRequest request){
-        songSubmissionService.submitSong(roomCode, request.getUserId(), request.getYoutubeUrl());
+        songSubmissionService.submitSong(roomCode, SecurityUtils.getCurrentUserId(), request.getYoutubeUrl());
         return ResponseEntity.ok().build();
     }
 
@@ -37,8 +39,15 @@ public class SongSubmissionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SongSubmission>> getUserRoomSongs(@PathVariable String roomCode, @RequestParam String userId){
-       List<SongSubmission> list= songSubmissionService.getUserRoomSongs(roomCode,userId);
+    public ResponseEntity<List<SongSubmission>> getUserRoomSongs(@PathVariable String roomCode){
+       List<SongSubmission> list= songSubmissionService.getUserRoomSongs(roomCode,SecurityUtils.getCurrentUserId());
        return ResponseEntity.ok(list);
+    }
+
+    @PutMapping("/{songId}")
+    public ResponseEntity<?> updateSong(@PathVariable String roomCode, @PathVariable UUID songId, @RequestBody UpdateSongRequest request){
+        songSubmissionService.updateSong(roomCode, songId, SecurityUtils.getCurrentUserId(), request.getYoutubeUrl());
+
+        return ResponseEntity.ok().build();
     }
 }

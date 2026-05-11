@@ -78,15 +78,14 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public Room joinRoom(String roomCode,String userID){
+    public Room joinRoom(String roomCode,UUID userID){
       Room room = getRoomByCode(roomCode);
-      UUID userUUID = UUID.fromString(userID);
 
-      if(!userRepository.existsById(userUUID)){
+      if(!userRepository.existsById(userID)){
             throw new UserNotFoundException("User not found!");
       }
 
-      if(roomPlayerRepository.existsByRoomIdAndUserId(room.getId(),userUUID)){
+      if(roomPlayerRepository.existsByRoomIdAndUserId(room.getId(),userID)){
           throw new UserAlreadyInRoomException("User already present in room");
       }
       if (roomPlayerRepository.countByRoomId(room.getId())>=room.getMaxPlayers()){
@@ -100,7 +99,7 @@ public class RoomServiceImpl implements RoomService{
 
         RoomPlayer player=new RoomPlayer();
       player.setRoomId(room.getId());
-      player.setUserId(userUUID);
+      player.setUserId(userID);
       player.setScore(0);
 
       roomPlayerRepository.save(player);
@@ -160,10 +159,9 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public void startGame(String roomCode, String adminUserId){
+    public void startGame(String roomCode, UUID adminUserId){
         Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
-        UUID adminUUID=UUID.fromString(adminUserId);
-        if (!room.getAdminUserId().equals(adminUUID)){
+        if (!room.getAdminUserId().equals(adminUserId)){
             throw new UserNotAdminException("Only admins can start the game!");
         }
 
@@ -189,11 +187,10 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public void startRound(String roomCode,String adminUserId){
+    public void startRound(String roomCode,UUID adminUserId){
         Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
-        UUID adminUUID=UUID.fromString(adminUserId);
 
-        if (!room.getAdminUserId().equals(adminUUID)){
+        if (!room.getAdminUserId().equals(adminUserId)){
             throw new UserNotAdminException("Only admins can start a round");
         }
 
@@ -243,12 +240,12 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public void endRound(String roomCode, String adminUserId, String roundId){
+    public void endRound(String roomCode, UUID adminUserId, String roundId){
 
         Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
-        UUID adminUUID=UUID.fromString(adminUserId);
 
-        if (!room.getAdminUserId().equals(adminUUID)){
+
+        if (!room.getAdminUserId().equals(adminUserId)){
             throw new UserNotAdminException("Only admins can end a round");
         }
 
@@ -283,20 +280,17 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public void endGame(String roomCode, String adminUserId) {
+    public void endGame(String roomCode, UUID adminUserId) {
 
-        Room room = roomRepository.findByRoomCode(roomCode)
-                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
-        UUID adminUUID = UUID.fromString(adminUserId);
-
-        if (!room.getAdminUserId().equals(adminUUID)) {
+        /*if (!room.getAdminUserId().equals(adminUserId)) {
             throw new UserNotAdminException("Only admin can finish the game");
         }
 
         if (room.getStatus() != RoomStatus.PLAYING) {
             throw new InvalidGameStatusException("Game is not in progress");
-        }
+        }*/
 
 
         boolean activeRoundExists =

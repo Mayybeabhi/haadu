@@ -81,7 +81,7 @@ export default function LobbyPage() {
     setLoading(true)
     setError('')
     try {
-      await startGame(roomCode, user.id)
+      await startGame(roomCode)
       navigate(`/room/${roomCode}/game`)
     } catch (e) {
       setError(e.response?.data?.message || 'Could not start game')
@@ -113,7 +113,6 @@ export default function LobbyPage() {
 
           <SongSubmissionPanel
             roomCode={roomCode}
-            userId={user?.id}
             songCount={room?.songCount ?? 1}
             onSubmitted={loadData}
           />
