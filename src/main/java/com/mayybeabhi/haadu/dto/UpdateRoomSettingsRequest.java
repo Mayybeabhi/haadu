@@ -5,8 +5,6 @@ import lombok.Data;
 @Data
 public class UpdateRoomSettingsRequest {
 
-    private String adminUserId;
-
     private Boolean isRoundTimerEnabled;
     private Integer roundDuration;
 

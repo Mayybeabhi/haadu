@@ -1,5 +1,6 @@
 package com.mayybeabhi.haadu.service;
 
+import com.mayybeabhi.haadu.dto.SubmitGuessRequest;
 import com.mayybeabhi.haadu.entity.Guess;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
@@ -30,8 +31,9 @@ public class GuessServiceImpl implements GuessService{
         this.gameEventPublisher=gameEventPublisher;
     }
 
-    public void submitGuess(String roomCode,String roundId,UUID guessingUserId, String guessedUserId){
+    public void submitGuess(String roomCode,String roundId,UUID guessingUserId, SubmitGuessRequest request){
 
+        String guessedUserId=request.getGuessedUserId();
         Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
         UUID roundUUID=UUID.fromString(roundId);
         UUID guessedUserUUID=UUID.fromString(guessedUserId);

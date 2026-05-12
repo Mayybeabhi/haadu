@@ -18,9 +18,9 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createRoom(){
+    public ResponseEntity<CreateRoomResponse> createRoom(){
         Room room= roomService.createRoom(SecurityUtils.getCurrentUserId());
-        return ResponseEntity.ok(room.getRoomCode());
+        return ResponseEntity.ok( CreateRoomResponse.builder().roomCode(room.getRoomCode()).build());
     }
 
     @GetMapping("/{roomCode}")

@@ -8,6 +8,7 @@ import com.mayybeabhi.haadu.realtime.GameEvent;
 import com.mayybeabhi.haadu.realtime.GameEventPublisher;
 import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
+import com.mayybeabhi.haadu.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.mayybeabhi.haadu.dto.GameStateResponse;
@@ -112,7 +113,7 @@ public class RoomServiceImpl implements RoomService{
     @Transactional
     public Room updateRoomSettings(String roomCode, UpdateRoomSettingsRequest request){
         Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Invalid room code, room not found"));
-        UUID adminUserUUID=UUID.fromString(request.getAdminUserId());
+        UUID adminUserUUID= SecurityUtils.getCurrentUserId();
 
         if(!room.getAdminUserId().equals(adminUserUUID)){
             throw new UserNotAdminException("Only admin of the room can edit settings");

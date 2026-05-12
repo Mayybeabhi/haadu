@@ -17,7 +17,7 @@ public class GuessController {
 
     @PostMapping("/{roomCode}/rounds/{roundId}/guess")
     public ResponseEntity<?> submitGuess(@PathVariable String roomCode, @PathVariable String roundId, @RequestBody SubmitGuessRequest request){
-        guessService.submitGuess(roomCode,roundId, SecurityUtils.getCurrentUserId(), request.getGuessedUserId());
+        guessService.submitGuess(roomCode,roundId, SecurityUtils.getCurrentUserId(), request);
 
         return ResponseEntity.ok().build();
     }

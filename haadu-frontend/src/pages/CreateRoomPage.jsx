@@ -26,10 +26,10 @@ export default function CreateRoomPage() {
     setError('')
 
     try {
-        const roomCode=await createRoom()
+        const response=await createRoom()
+        const roomCode=response.roomCode
         console.log(roomCode)
       const room = await updateRoomSettings(roomCode,{
-        adminUserId: user.id,
         maxPlayers: Number(maxPlayers),
         songCount: Number(songCount),
         isInBetweenRoundTimerEnabled,
