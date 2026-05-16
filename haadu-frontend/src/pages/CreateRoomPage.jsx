@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
-import Toggle from '../components/ui/Toggle'
 import { getGameState, setGameState } from '../store/gameStore'
 import { createRoom } from '../api/roomApi'
 import { updateRoomSettings } from '../api/roomApi'
@@ -14,10 +13,6 @@ export default function CreateRoomPage() {
 
   const [maxPlayers, setMaxPlayers] = useState(8)
   const [songCount, setSongCount] = useState(5)
-  const [isInBetweenRoundTimerEnabled, setisInBetweenRoundTimerEnabled] = useState(true)
-  const [inBetweenRoundDuration, setinBetweenRoundDuration] = useState(10)
-  const [isRoundTimerEnabled, setisRoundTimerEnabled] = useState(false)
-  const [roundDuration, setroundDuration] = useState(30)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -32,10 +27,10 @@ export default function CreateRoomPage() {
       const room = await updateRoomSettings(roomCode,{
         maxPlayers: Number(maxPlayers),
         songCount: Number(songCount),
-        isInBetweenRoundTimerEnabled,
-        inBetweenRoundDuration: Number(inBetweenRoundDuration),
-        isRoundTimerEnabled,
-        roundDuration: Number(roundDuration),
+        isInBetweenRoundTimerEnabled: false,
+        inBetweenRoundDuration: 0 ,
+        isRoundTimerEnabled: false,
+        roundDuration: 0,
       })
 
       setGameState({ room: { roomCode }, isAdmin: true })
@@ -73,44 +68,6 @@ export default function CreateRoomPage() {
               value={songCount}
               onChange={(e) => setSongCount(e.target.value)}
             />
-          </Field>
-
-          <Field label="Between round timer">
-            <div className="stack">
-              <Toggle
-                checked={isInBetweenRoundTimerEnabled}
-                onChange={(e) => setisInBetweenRoundTimerEnabled(e.target.checked)}
-                label="Enable break time"
-              />
-              {isInBetweenRoundTimerEnabled && (
-                <Input
-                  type="number"
-                  min="0"
-                  value={inBetweenRoundDuration}
-                  onChange={(e) => setinBetweenRoundDuration(e.target.value)}
-                  placeholder="Break time in seconds"
-                />
-              )}
-            </div>
-          </Field>
-
-          <Field label="Round timer">
-            <div className="stack">
-              <Toggle
-                checked={isRoundTimerEnabled}
-                onChange={(e) => setisRoundTimerEnabled(e.target.checked)}
-                label="Enable round timer"
-              />
-              {isRoundTimerEnabled && (
-                <Input
-                  type="number"
-                  min="0"
-                  value={roundDuration}
-                  onChange={(e) => setroundDuration(e.target.value)}
-                  placeholder="Round time in seconds"
-                />
-              )}
-            </div>
           </Field>
 
           <Button color="green" onClick={handleCreate} disabled={loading}>

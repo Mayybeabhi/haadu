@@ -24,7 +24,7 @@ public interface SongSubmissionRepository extends JpaRepository<SongSubmission, 
           WHERE r.roomId = :roomId
       )
 """) List<SongSubmission> findUnusedSongsByRoomId(UUID roomId);
-    List<SongSubmission> findByRoomIdAndUserId(UUID roomId,UUID userId);
+    List<SongSubmission> findByRoomIdAndUserIdOrderByCreatedAtAsc(UUID roomId,UUID userId);
     List<SongSubmission> findByRoomId(UUID roomId);
     
 }

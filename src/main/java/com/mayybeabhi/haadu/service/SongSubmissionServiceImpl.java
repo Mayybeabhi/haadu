@@ -68,7 +68,7 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
     @Transactional
     public List<SongSubmission> getUserRoomSongs(String roomCode,UUID userId){
         UUID roomId= roomRepository.findByRoomCode(roomCode).get().getId();
-        List<SongSubmission> list= songSubmissionRepository.findByRoomIdAndUserId(roomId,userId);
+        List<SongSubmission> list= songSubmissionRepository.findByRoomIdAndUserIdOrderByCreatedAtAsc(roomId,userId);
         return list;
     }
 

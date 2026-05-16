@@ -9,14 +9,6 @@ export default function RoomSettingsCard({ room }) {
       <div className="grid-auto" style={{ marginTop: 16 }}>
         <Setting label="Max players" value={room.maxPlayers} />
         <Setting label="Song count" value={room.songCount} />
-        <Setting
-          label="Between rounds"
-          value={room.breakTimeEnabled ? `${room.breakTimeSeconds}s` : 'off'}
-        />
-        <Setting
-          label="Round timer"
-          value={room.roundTimeEnabled ? `${room.roundTimeSeconds}s` : 'off'}
-        />
       </div>
     </Card>
   )

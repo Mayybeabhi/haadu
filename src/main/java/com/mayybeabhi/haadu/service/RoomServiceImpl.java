@@ -141,10 +141,10 @@ public class RoomServiceImpl implements RoomService{
                 throw new BusinessRuleException("In Between Round duration must be greater than 0");
             }
 
-            room.setRoundTimer(request.getRoundDuration());
+            room.setInBetweenRoundTimer(request.getInBetweenRoundDuration());
         }
         else {
-            room.setRoundTimer(0);
+            room.setInBetweenRoundTimer(0);
         }
 
         room.setMaxPlayers(request.getMaxPlayers());
