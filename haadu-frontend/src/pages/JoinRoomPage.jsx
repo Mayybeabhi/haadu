@@ -22,7 +22,7 @@ export default function JoinRoomPage() {
       const room = await joinRoom(roomCode)
 
       setGameState({ room, isAdmin: false })
-      navigate(`/room/${roomCode}`)
+      navigate(`/room/${room.roomCode}`)
     } catch (e) {
       setError(e.response?.data?.message || 'Could not join room')
     } finally {

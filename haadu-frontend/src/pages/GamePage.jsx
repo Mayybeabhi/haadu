@@ -24,7 +24,7 @@ export default function GamePage() {
   const [phase, setPhase] = useState('waiting')
   const [showScores, setShowScores] = useState(false)
   const [scoringMode, setScoringMode] = useState(initialMode || 'GUESSER')
-  const [scores, setScores] = useState({})
+  const [scores, setScores] = useState([])
   const [roundNumber, setRoundNumber] = useState(0)
   const [currentRound, setCurrentRound] = useState(null)
   const [currentSongUrl, setCurrentSongUrl] = useState('')

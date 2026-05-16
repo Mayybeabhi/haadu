@@ -4,19 +4,14 @@ import Button from '../ui/Button'
 const COLORS = ['#f7c948', '#4caf82', '#3d7fe8', '#e8453c', '#9b59b6', '#f39c12', '#e91e8c', '#1abc9c']
 
 export default function ScorePanel({
-  scores = {},
+  scores = [],
   players = [],
   currentUserId,
   scoringMode,
   onChangeMode,
 }) {
-  const sortedScores = Object.entries(scores)
-    .map(([uid, score]) => ({
-      uid,
-      score,
-      player: players.find((p) => String(p.userId) === String(uid)),
-    }))
-    .sort((a, b) => b.score - a.score)
+  const sortedScores = [...scores]
+  .sort((a, b) => b.score - a.score)
 
   return (
     <Card>
@@ -45,7 +40,7 @@ export default function ScorePanel({
 
         {sortedScores.map((entry, i) => (
           <div
-            key={entry.uid}
+            key={entry.userId}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -72,14 +67,14 @@ export default function ScorePanel({
                 background: COLORS[i % COLORS.length],
               }}
             >
-              {(entry.player?.username || '?')[0]?.toUpperCase()}
+              {(entry.username || '?')[0]?.toUpperCase()}
             </div>
 
             <div style={{ flex: 1, fontWeight: 800 }}>
-              {entry.player?.username || entry.uid}
+              {entry.username}
             </div>
 
-            {String(entry.uid) === String(currentUserId) && (
+            {String(entry.userId) === String(currentUserId) && (
               <span className="badge" style={{ background: '#e8f5e9' }}>
                 you
               </span>

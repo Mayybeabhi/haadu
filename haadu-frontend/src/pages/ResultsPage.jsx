@@ -11,7 +11,7 @@ export default function ResultsPage() {
 
   const [players, setPlayers] = useState([])
   const [mode, setMode] = useState('GUESSER')
-  const [scores, setScores] = useState({})
+  const [scores, setScores] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -26,7 +26,7 @@ export default function ResultsPage() {
       ])
 
       setPlayers(playerData || [])
-      setScores(scoreData || {})
+      setScores(scoreData || [])
     } catch (e) {
       setError(e.response?.data?.message || 'Failed to load results')
     } finally {
@@ -43,14 +43,8 @@ export default function ResultsPage() {
   const sorted = useMemo(() => {
     if (!players.length || !scores) return []
 
-    return Object.entries(scores)
-      .map(([uid, score]) => ({
-        uid,
-        score,
-        player:
-          players.find((p) => String(p.userId) === String(uid)) || null,
-      }))
-      .sort((a, b) => b.score - a.score)
+    return [...scores]
+  .sort((a, b) => b.score - a.score)
   }, [scores, players])
 
   const topScore = sorted[0]?.score ?? 0
@@ -109,7 +103,7 @@ export default function ResultsPage() {
 
             {winners.map((winner) => (
               <div
-                key={winner.uid}
+                key={winner.userId}
                 style={{
                   background: '#fff7c2',
                   border: '3px solid var(--ink)',
@@ -121,7 +115,7 @@ export default function ResultsPage() {
                   boxShadow: '5px 5px 0 var(--ink)',
                 }}
               >
-                {winner.player?.username || winner.uid} — {winner.score} pts
+                {winner.username} — {winner.score} pts
               </div>
             ))}
           </div>
@@ -137,7 +131,7 @@ export default function ResultsPage() {
 
               return (
                 <div
-                  key={entry.uid}
+                  key={entry.userId}
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -148,7 +142,7 @@ export default function ResultsPage() {
                   }}
                 >
                   <div style={{ fontWeight: 800 }}>
-                    {i + 1}. {entry.player?.username || entry.uid}
+                    {i + 1}. {entry.username}
                   </div>
                   <div style={{ fontWeight: 900 }}>
                     {entry.score} pts

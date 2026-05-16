@@ -10,6 +10,6 @@ import java.util.*;
 public interface SongSubmissionService {
     void submitSong(String roomCode,UUID userId,String youtubeUrl);
     List<SongSubmission> getUserRoomSongs(String roomCode,UUID userId);
-    void updateSong(String roomCode, UUID songId, UUID userId, String youtubeUrl
-    );
+    void updateSong(String roomCode, UUID songId, UUID userId, String youtubeUrl);
+    SongSubmission getSong(String roomCode,String songId);
 }

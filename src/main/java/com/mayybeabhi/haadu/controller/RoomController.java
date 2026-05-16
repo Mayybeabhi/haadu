@@ -29,9 +29,9 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/join")
-    public ResponseEntity<String> joinRoom(@PathVariable String roomCode){
+    public ResponseEntity<RoomCodeResponse> joinRoom(@PathVariable String roomCode){
         Room room= roomService.joinRoom(roomCode, SecurityUtils.getCurrentUserId());
-         return ResponseEntity.ok(room.getRoomCode());
+         return ResponseEntity.ok(RoomCodeResponse.builder().roomCode(room.getRoomCode()).build());
     }
 
     @PostMapping("/{roomCode}/settings")
@@ -46,13 +46,13 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("{roomCode}/rounds/start")
+    @PostMapping("/{roomCode}/rounds/start")
     public ResponseEntity<?> startRound(@PathVariable String roomCode){
         roomService.startRound(roomCode, SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("{roomCode}/rounds/{roundId}/end")
+    @PostMapping("/{roomCode}/rounds/{roundId}/end")
     public ResponseEntity<?> endRound(@PathVariable String roomCode,@PathVariable String roundId){
         roomService.endRound(roomCode, SecurityUtils.getCurrentUserId(), roundId);
         return ResponseEntity.ok().build();
@@ -65,13 +65,13 @@ public class RoomController {
     }
 
     @GetMapping("/{roomCode}/players")
-    public List<RoomPlayerResponse> getPlayers(@PathVariable String roomCode){
-        return roomService.getPlayers(roomCode);
+    public ResponseEntity<List<RoomPlayerResponse>> getPlayers(@PathVariable String roomCode){
+        return ResponseEntity.ok(roomService.getPlayers(roomCode));
     }
 
     @GetMapping("/{roomCode}/state")
-public ResponseEntity<GameStateResponse> getRoomState(@PathVariable String roomCode) {
-    return ResponseEntity.ok(roomService.getRoomState(roomCode));
-}
+    public ResponseEntity<GameStateResponse> getRoomState(@PathVariable String roomCode) {
+        return ResponseEntity.ok(roomService.getRoomState(roomCode));
+    }
 
 }

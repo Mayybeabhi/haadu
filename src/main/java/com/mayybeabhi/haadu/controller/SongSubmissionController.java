@@ -1,6 +1,7 @@
 package com.mayybeabhi.haadu.controller;
 
 
+import com.mayybeabhi.haadu.dto.SongSubmissionResponse;
 import com.mayybeabhi.haadu.dto.SubmitSongRequest;
 import com.mayybeabhi.haadu.dto.UpdateSongRequest;
 import com.mayybeabhi.haadu.entity.SongSubmission;
@@ -17,11 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/rooms/{roomCode}/songs")
 public class SongSubmissionController {
     private final SongSubmissionService songSubmissionService;
-    private final SongSubmissionRepository songSubmissionRepository;
 
-    public SongSubmissionController(SongSubmissionService songSubmissionService,SongSubmissionRepository songSubmissionRepository) {
+    public SongSubmissionController(SongSubmissionService songSubmissionService) {
         this.songSubmissionService=songSubmissionService;
-        this.songSubmissionRepository=songSubmissionRepository;
     }
 
     @PostMapping
@@ -31,17 +30,22 @@ public class SongSubmissionController {
     }
 
     @GetMapping("/{songId}")
-    public ResponseEntity<SongSubmission> getSong(@PathVariable String roomCode, @PathVariable String songId){
-    return ResponseEntity.ok(
-        songSubmissionRepository.findById(UUID.fromString(songId))
-            .orElseThrow(() -> new RuntimeException("Song not found"))
-    );
+    public ResponseEntity<SongSubmissionResponse> getSong(@PathVariable String roomCode, @PathVariable String songId){
+
+        SongSubmission song = songSubmissionService.getSong(roomCode,songId);
+
+        return ResponseEntity.ok(SongSubmissionResponse.builder().id(song.getId()).userId(song.getUserId()).youtubeUrl(song.getYoutubeUrl()).build()
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<SongSubmission>> getUserRoomSongs(@PathVariable String roomCode){
-       List<SongSubmission> list= songSubmissionService.getUserRoomSongs(roomCode,SecurityUtils.getCurrentUserId());
-       return ResponseEntity.ok(list);
+    public ResponseEntity<List<SongSubmissionResponse>> getUserRoomSongs(@PathVariable String roomCode){
+
+        List<SongSubmission> songs = songSubmissionService.getUserRoomSongs(roomCode, SecurityUtils.getCurrentUserId());
+
+        List<SongSubmissionResponse> response = songs.stream().map(song -> SongSubmissionResponse.builder().id(song.getId()).userId(song.getUserId()).youtubeUrl(song.getYoutubeUrl()).build()).toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{songId}")

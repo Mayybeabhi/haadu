@@ -1,9 +1,11 @@
 package com.mayybeabhi.haadu.service;
 
 import com.mayybeabhi.haadu.ScoringMode;
+import com.mayybeabhi.haadu.dto.PlayerScoreResponse;
 import com.mayybeabhi.haadu.entity.Guess;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
+import com.mayybeabhi.haadu.entity.User;
 import com.mayybeabhi.haadu.exception.RoomNotFoundException;
 import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;
@@ -14,13 +16,15 @@ import java.util.*;
 @Service
 public class ScoreServiceImpl implements ScoreService{
 
+    private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final RoundRepository roundRepository;
     private final SongSubmissionRepository songSubmissionRepository;
     private final GuessRepository guessRepository;
     private final RoomPlayerRepository roomPlayerRepository;
 
-    public ScoreServiceImpl(RoomRepository roomRepository,RoundRepository roundRepository,SongSubmissionRepository songSubmissionRepository,GuessRepository guessRepository,RoomPlayerRepository roomPlayerRepository){
+    public ScoreServiceImpl(UserRepository userRepository,RoomRepository roomRepository,RoundRepository roundRepository,SongSubmissionRepository songSubmissionRepository,GuessRepository guessRepository,RoomPlayerRepository roomPlayerRepository){
+        this.userRepository=userRepository;
         this.roomRepository=roomRepository;
         this.roundRepository=roundRepository;
         this.songSubmissionRepository=songSubmissionRepository;
@@ -30,7 +34,7 @@ public class ScoreServiceImpl implements ScoreService{
 
     @Override
     @Transactional
-    public Map<UUID,Integer> calculateScores(String roomCode, ScoringMode mode){
+    public List<PlayerScoreResponse> calculateScores(String roomCode, ScoringMode mode){
         Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
 
         Map<UUID,Integer> scores=new HashMap<>();
@@ -57,7 +61,9 @@ public class ScoreServiceImpl implements ScoreService{
             }
         }
 
-        return scores;
+        return scores.entrySet().stream().map(entry -> {
+            User user = userRepository.findById(entry.getKey()).orElseThrow();
+            return PlayerScoreResponse.builder().userId(user.getId()).username(user.getUsername()).score(entry.getValue()).build();}).toList();
     }
 
     private void applyOwnerScoring(Map<UUID,Integer> scores,UUID songOwnerId,List<Guess> guesses){

@@ -1,10 +1,12 @@
 package com.mayybeabhi.haadu.service;
 
 
+import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.RoomStatus;
 import com.mayybeabhi.haadu.entity.SongSubmission;
 import com.mayybeabhi.haadu.exception.GameAlreadyStartedException;
 import com.mayybeabhi.haadu.exception.InvalidGameStatusException;
+import com.mayybeabhi.haadu.exception.RoomNotFoundException;
 import com.mayybeabhi.haadu.exception.UserNotInRoomException;
 import com.mayybeabhi.haadu.realtime.GameEvent;
 import com.mayybeabhi.haadu.realtime.GameEventPublisher;
@@ -96,5 +98,17 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
         songSubmissionRepository.save(song);
 
         gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.SONG_SUBMITTED, Map.of("userId", userId, "roomCode", roomCode)));
+    }
+
+    @Override
+    public SongSubmission getSong(String roomCode, String songId){
+
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+
+        SongSubmission song = songSubmissionRepository.findById(UUID.fromString(songId)).orElseThrow(() -> new RuntimeException("Song not found"));
+
+        if (!song.getRoomId().equals(room.getId())) {throw new RuntimeException("Song does not belong to room");}
+
+        return song;
     }
 }

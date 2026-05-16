@@ -20,10 +20,10 @@ export async function getRoomPlayers(roomCode) {
   return res.data
 }
 
-export async function getRoomDetails(roomCode) {
+/*export async function getRoomDetails(roomCode) {
   const res = await client.get(`/rooms/${roomCode}`)
   return res.data
-}
+}*/
 
 export async function getRoomState(roomCode) {
   const res = await client.get(`/rooms/${roomCode}/state`)
