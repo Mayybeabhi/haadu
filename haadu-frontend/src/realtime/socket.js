@@ -3,7 +3,7 @@ import SockJS from 'sockjs-client'
 
 export function createRoomSocket(roomCode, onEvent) {
   const client = new Client({
-    webSocketFactory: () => new SockJS('/ws'),
+    webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/ws`),
     reconnectDelay: 3000,
     onConnect: () => {
       console.log('Connected to room socket')

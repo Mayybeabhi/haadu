@@ -2,6 +2,7 @@ package com.mayybeabhi.haadu.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -24,7 +25,21 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationErrors(
+            MethodArgumentNotValidException ex
+    ) {
 
+        String message =
+                ex.getBindingResult()
+                        .getFieldError()
+                        .getDefaultMessage();
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                message
+        );
+    }
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<?> handleUsernameExists(UsernameAlreadyExistsException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
