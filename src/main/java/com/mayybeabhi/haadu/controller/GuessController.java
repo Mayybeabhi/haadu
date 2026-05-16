@@ -3,6 +3,7 @@ package com.mayybeabhi.haadu.controller;
 import com.mayybeabhi.haadu.dto.SubmitGuessRequest;
 import com.mayybeabhi.haadu.security.SecurityUtils;
 import com.mayybeabhi.haadu.service.GuessService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class GuessController {
     }
 
     @PostMapping("/{roomCode}/rounds/{roundId}/guess")
-    public ResponseEntity<?> submitGuess(@PathVariable String roomCode, @PathVariable String roundId, @RequestBody SubmitGuessRequest request){
+    public ResponseEntity<?> submitGuess(@PathVariable String roomCode, @PathVariable String roundId,@Valid @RequestBody SubmitGuessRequest request){
         guessService.submitGuess(roomCode,roundId, SecurityUtils.getCurrentUserId(), request);
 
         return ResponseEntity.ok().build();

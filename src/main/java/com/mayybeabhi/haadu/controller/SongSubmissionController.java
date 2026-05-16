@@ -11,6 +11,7 @@ import com.mayybeabhi.haadu.service.SongSubmissionService;
 
 import java.util.*;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class SongSubmissionController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> submitSong(@PathVariable String roomCode, @RequestBody SubmitSongRequest request){
+    public ResponseEntity<Void> submitSong(@PathVariable String roomCode,@Valid @RequestBody SubmitSongRequest request){
         songSubmissionService.submitSong(roomCode, SecurityUtils.getCurrentUserId(), request.getYoutubeUrl());
         return ResponseEntity.ok().build();
     }
@@ -49,7 +50,7 @@ public class SongSubmissionController {
     }
 
     @PutMapping("/{songId}")
-    public ResponseEntity<?> updateSong(@PathVariable String roomCode, @PathVariable UUID songId, @RequestBody UpdateSongRequest request){
+    public ResponseEntity<?> updateSong(@PathVariable String roomCode, @PathVariable UUID songId,@Valid @RequestBody UpdateSongRequest request){
         songSubmissionService.updateSong(roomCode, songId, SecurityUtils.getCurrentUserId(), request.getYoutubeUrl());
 
         return ResponseEntity.ok().build();

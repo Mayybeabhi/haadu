@@ -5,6 +5,7 @@ import com.mayybeabhi.haadu.dto.auth.AuthResponse;
 import com.mayybeabhi.haadu.entity.User;
 import com.mayybeabhi.haadu.security.JwtService;
 import com.mayybeabhi.haadu.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/guest")
-    public AuthResponse createGuest(@RequestBody CreateGuestUserRequest request){
+    public AuthResponse createGuest(@Valid @RequestBody CreateGuestUserRequest request){
         User user= userService.createGuestUser(request.getUsername());
         String token = jwtService.generateToken(user.getId());
 

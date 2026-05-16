@@ -4,6 +4,7 @@ import com.mayybeabhi.haadu.dto.*;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.security.SecurityUtils;
 import com.mayybeabhi.haadu.service.RoomService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class RoomController {
     }
 
     @PostMapping("/{roomCode}/settings")
-    public ResponseEntity<?> updateRoomSettings(@PathVariable String roomCode,@RequestBody UpdateRoomSettingsRequest request){
+    public ResponseEntity<?> updateRoomSettings(@PathVariable String roomCode,@Valid @RequestBody UpdateRoomSettingsRequest request){
              roomService.updateRoomSettings(roomCode,request);
         return ResponseEntity.ok().build();
     }
