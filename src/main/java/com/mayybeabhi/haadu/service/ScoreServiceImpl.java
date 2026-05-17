@@ -1,11 +1,10 @@
 package com.mayybeabhi.haadu.service;
 
 import com.mayybeabhi.haadu.ScoringMode;
+import com.mayybeabhi.haadu.dto.GuessCellResponse;
 import com.mayybeabhi.haadu.dto.PlayerScoreResponse;
-import com.mayybeabhi.haadu.entity.Guess;
-import com.mayybeabhi.haadu.entity.Room;
-import com.mayybeabhi.haadu.entity.Round;
-import com.mayybeabhi.haadu.entity.User;
+import com.mayybeabhi.haadu.dto.RoundHistoryResponse;
+import com.mayybeabhi.haadu.entity.*;
 import com.mayybeabhi.haadu.exception.RoomNotFoundException;
 import com.mayybeabhi.haadu.repository.*;
 import jakarta.transaction.Transactional;
@@ -45,6 +44,9 @@ public class ScoreServiceImpl implements ScoreService{
         List<Round> rounds=roundRepository.findByRoomId(room.getId());
 
         for(Round round: rounds){
+            if (!round.getStatus().equals(RoundStatus.REVEALED)) {
+                continue;
+            }
             if (round.getSongSubmissionId() == null) {
                 continue;
             }
@@ -81,5 +83,46 @@ public class ScoreServiceImpl implements ScoreService{
             }
         }
     }
+
+    @Override
+    @Transactional
+    public List<RoundHistoryResponse> getRoundHistory(String roomCode) {
+
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+
+        List<Round> rounds = roundRepository.findByRoomId(room.getId());
+
+        List<RoundHistoryResponse> response = new ArrayList<>();
+
+        for (Round round : rounds) {
+
+            if (!round.getStatus().equals(RoundStatus.REVEALED)) {
+                continue;
+            }
+
+            SongSubmission song = songSubmissionRepository.findById(round.getSongSubmissionId()).orElseThrow();
+
+            User owner = userRepository.findById(song.getUserId()).orElseThrow();
+
+            List<Guess> guesses = guessRepository.findByRoundId(round.getId());
+
+            Map<String, GuessCellResponse> playerGuesses = new LinkedHashMap<>();
+
+            for (Guess guess : guesses) {
+
+                User player = userRepository.findById(guess.getGuessingUserId()).orElseThrow();
+
+                User guessedUser = userRepository.findById(guess.getGuessedUserId()).orElseThrow();
+
+                boolean correct = guessedUser.getId().equals(owner.getId());
+
+                playerGuesses.put(player.getUsername(), GuessCellResponse.builder().guessedUsername(guessedUser.getUsername()).correct(correct).build());
+            }
+
+            response.add(RoundHistoryResponse.builder().roundNumber(round.getRoundNumber()).youtubeUrl(song.getYoutubeUrl()).ownerUsername(owner.getUsername()).playerGuesses(playerGuesses).build());
+        }
+
+        return response;
+        }
 
 }

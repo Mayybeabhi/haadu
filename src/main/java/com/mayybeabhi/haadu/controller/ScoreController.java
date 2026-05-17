@@ -2,6 +2,7 @@ package com.mayybeabhi.haadu.controller;
 
 import com.mayybeabhi.haadu.ScoringMode;
 import com.mayybeabhi.haadu.dto.PlayerScoreResponse;
+import com.mayybeabhi.haadu.dto.RoundHistoryResponse;
 import com.mayybeabhi.haadu.service.ScoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,12 @@ public class ScoreController {
     public ResponseEntity<List<PlayerScoreResponse>> calculateScores(@PathVariable String roomCode, @RequestParam ScoringMode mode){
 
         return ResponseEntity.ok(scoreService.calculateScores(roomCode, mode));
+    }
+
+    @GetMapping("/round-history")
+    public ResponseEntity<List<RoundHistoryResponse>> getRoundHistory(@PathVariable String roomCode) {
+
+        return ResponseEntity.ok(scoreService.getRoundHistory(roomCode));
     }
 
 }

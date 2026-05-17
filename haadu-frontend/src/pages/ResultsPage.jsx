@@ -5,6 +5,10 @@ import { getScores } from '../api/scoreApi'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 
+import RoundHistoryTable from '../components/game/RoundHistoryTable'
+
+import { getRoundHistory } from '../api/scoreApi'
+
 export default function ResultsPage() {
   const { roomCode } = useParams()
   const navigate = useNavigate()
@@ -14,6 +18,28 @@ export default function ResultsPage() {
   const [scores, setScores] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [roundHistory, setRoundHistory] = useState([])
+
+  useEffect(() => {
+
+  async function load() {
+
+    try {
+
+      const data =
+        await getRoundHistory(roomCode)
+
+      setRoundHistory(data)
+
+    } catch (e) {
+
+      console.error(e)
+    }
+  }
+
+  load()
+
+}, [roomCode])
 
   const load = async (selectedMode = mode) => {
     try {
@@ -53,7 +79,7 @@ export default function ResultsPage() {
 
   return (
     <div className="page-shell center">
-      <div className="big-center-card stack animate-in">
+      <div className="big-center-card stack animate-in" style={{ maxWidth: '1400px' }}>
         <div className="page-title">winner time 🏆</div>
         <div className="page-subtitle">
           final standings based on selected scoring mode
@@ -151,6 +177,8 @@ export default function ResultsPage() {
               )
             })}
           </div>
+
+          <RoundHistoryTable rounds={roundHistory} players={players}/> 
 
           {/* 🔁 Play Again */}
           <Button

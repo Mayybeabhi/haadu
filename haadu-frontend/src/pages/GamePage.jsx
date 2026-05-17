@@ -14,6 +14,8 @@ import VoteList from '../components/game/VoteList'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import { getRoomState } from '../api/roomApi'
+import RoundHistoryTable from '../components/game/RoundHistoryTable'
+import { getRoundHistory } from '../api/scoreApi'
 
 export default function GamePage() {
   const { roomCode } = useParams()
@@ -21,8 +23,11 @@ export default function GamePage() {
   const { user, isAdmin, scoringMode: initialMode } = getGameState()
 
   const [players, setPlayers] = useState([])
+  const [roundHistory, setRoundHistory] = useState([])
   const [phase, setPhase] = useState('waiting')
   const [showScores, setShowScores] = useState(false)
+  const [showScoreSection, setShowScoreSection]= useState(true)
+  const [showHistorySection, setShowHistorySection]= useState(true)
   const [scoringMode, setScoringMode] = useState(initialMode || 'GUESSER')
   const [scores, setScores] = useState([])
   const [roundNumber, setRoundNumber] = useState(0)
@@ -94,11 +99,23 @@ export default function GamePage() {
   
 
   const loadScores = async (mode = scoringMode) => {
-    try {
-      const data = await getScores(roomCode, mode)
-      setScores(data)
-    } catch {}
-  }
+
+  try {
+
+    const [scoreData, historyData] =
+      await Promise.all([
+
+        getScores(roomCode, mode),
+
+        getRoundHistory(roomCode),
+      ])
+
+    setScores(scoreData)
+
+    setRoundHistory(historyData)
+
+  } catch {}
+}
 
   useEffect(() => {
     if (!user) {
@@ -226,7 +243,44 @@ export default function GamePage() {
         }}
       />
 
-      {showScores && (
+     {showScores && (
+
+  <Card
+    className="stack"
+    style={{
+      maxWidth: '1500px',
+      width: '100%',
+      margin: '0 auto',
+      gap: 24,
+    }}
+  >
+
+    {/* SCORES */}
+
+    <div className="stack">
+
+      <div
+        onClick={() =>
+          setShowScoreSection(
+            !showScoreSection
+          )
+        }
+        style={{
+          cursor: 'pointer',
+          fontWeight: 900,
+          fontSize: '1.3rem',
+          userSelect: 'none',
+        }}
+      >
+        {
+          showScoreSection
+            ? '▼'
+            : '▶'
+        } Scores
+      </div>
+
+      {showScoreSection && (
+
         <ScorePanel
           scores={scores}
           players={players}
@@ -238,6 +292,55 @@ export default function GamePage() {
           }}
         />
       )}
+
+    </div>
+
+    {/* ROUND HISTORY */}
+
+    <div className="stack">
+
+      <div
+        className="row"
+        style={{
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+
+        <div
+          onClick={() =>
+            setShowHistorySection(
+              !showHistorySection
+            )
+          }
+          style={{
+            cursor: 'pointer',
+            fontWeight: 900,
+            fontSize: '1.3rem',
+            userSelect: 'none',
+          }}
+        >
+          {
+            showHistorySection
+              ? '▼'
+              : '▶'
+          } Round History
+        </div>
+
+      </div>
+
+      {showHistorySection && (
+
+        <RoundHistoryTable
+          rounds={roundHistory}
+          players={players}
+        />
+      )}
+
+    </div>
+
+  </Card>
+)}
 
       {error && <div className="error-text">{error}</div>}
 
