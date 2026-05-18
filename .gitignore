@@ -40,6 +40,6 @@ build/
 
 # Env / secrets
 .env
-.env.production
+.env.*
 .env.local
 testFrontend/
