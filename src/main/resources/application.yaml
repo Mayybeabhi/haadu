@@ -11,7 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -22,3 +22,4 @@ jwt:
 
 server:
   port: 8080
+  forward-headers-strategy: framework
