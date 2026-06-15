@@ -8,10 +8,20 @@ export default function HomePage(){
     return(
         <div className="page-shell center">
       <div className="big-center-card stack animate-in">
-        <div className="doodle-stars floaty">✨ 🎵 ✨</div>
+        <img
+          src="/haadu-logo.svg"
+          alt="haadu"
+          style={{
+            width: "320px",
+            maxWidth: "90%",
+            height: "auto",
+            display: "block",
+            margin: "0 auto 12px auto"
+          }}
+        />
         <div className="page-title">haadu</div>
         <div className="page-subtitle">
-          guess maadu 🎶 — the multiplayer song guessing game
+          guess maadu - multiplayer song guessing game
         </div>
 
         <Card className="stack" style={{ marginTop: 24 }}>
