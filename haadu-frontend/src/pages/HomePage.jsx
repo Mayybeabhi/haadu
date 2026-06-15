@@ -12,7 +12,7 @@ export default function HomePage(){
           src="/haadu-logo.svg"
           alt="haadu"
           style={{
-            width: "320px",
+            width: "180px",
             maxWidth: "90%",
             height: "auto",
             display: "block",
