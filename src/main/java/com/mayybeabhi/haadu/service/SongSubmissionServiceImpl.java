@@ -4,10 +4,7 @@ package com.mayybeabhi.haadu.service;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.RoomStatus;
 import com.mayybeabhi.haadu.entity.SongSubmission;
-import com.mayybeabhi.haadu.exception.GameAlreadyStartedException;
-import com.mayybeabhi.haadu.exception.InvalidGameStatusException;
-import com.mayybeabhi.haadu.exception.RoomNotFoundException;
-import com.mayybeabhi.haadu.exception.UserNotInRoomException;
+import com.mayybeabhi.haadu.exception.*;
 import com.mayybeabhi.haadu.realtime.GameEvent;
 import com.mayybeabhi.haadu.realtime.GameEventPublisher;
 import com.mayybeabhi.haadu.realtime.GameEventType;
@@ -16,7 +13,7 @@ import com.mayybeabhi.haadu.repository.RoomRepository;
 import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
+import java.net.URI;
 import java.util.*;
 
 @Service
@@ -36,6 +33,10 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
     @Override
     @Transactional
     public void submitSong(String roomCode, UUID userId,String youtubeUrl){
+        youtubeUrl = youtubeUrl.trim();
+        if (!isValidYoutubeUrl(youtubeUrl)) {
+            throw new BusinessRuleException("Please enter a valid YouTube URL");
+        }
         UUID roomId=roomRepository.findByRoomCode(roomCode).get().getId();
         if (!roomPlayerRepository.existsByRoomIdAndUserId(roomId,userId)){
             throw new UserNotInRoomException("User is not in the room");
@@ -52,6 +53,10 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
             throw new InvalidGameStatusException("All songs have been already submitted");
         }
 
+        if (songSubmissionRepository.existsByRoomIdAndYoutubeUrl(roomId, youtubeUrl)) {
+            throw new BusinessRuleException("This song has already been submitted");
+        }
+
         SongSubmission song =new SongSubmission();
 
         song.setRoomId(roomId);
@@ -61,6 +66,9 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
         songSubmissionRepository.save(song);
         
         gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.SONG_SUBMITTED,Map.of("userId", userId, "roomCode", roomCode)));
+
+
+
 
     }
 
@@ -75,6 +83,10 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
     @Override
     @Transactional
     public void updateSong(String roomCode, UUID songId, UUID userId, String youtubeUrl) {
+        youtubeUrl = youtubeUrl.trim();
+        if (!isValidYoutubeUrl(youtubeUrl)) {
+            throw new BusinessRuleException("Please enter a valid YouTube URL");
+        }
 
         UUID roomId = roomRepository.findByRoomCode(roomCode).orElseThrow().getId();
 
@@ -93,6 +105,17 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
             throw new GameAlreadyStartedException("Song editing closed!");
         }
 
+        boolean duplicate =
+                songSubmissionRepository.existsByRoomIdAndYoutubeUrl(
+                        roomId,
+                        youtubeUrl
+                );
+
+        if (duplicate && !song.getYoutubeUrl().equals(youtubeUrl)) {
+            throw new BusinessRuleException(
+                    "This song has already been submitted"
+            );
+        }
         song.setYoutubeUrl(youtubeUrl);
 
         songSubmissionRepository.save(song);
@@ -110,5 +133,26 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
         if (!song.getRoomId().equals(room.getId())) {throw new RuntimeException("Song does not belong to room");}
 
         return song;
+    }
+
+
+    private boolean isValidYoutubeUrl(String url) {
+
+        try {
+
+            URI uri = URI.create(url);
+
+            String host = uri.getHost();
+
+            if (host == null) {
+                return false;
+            }
+
+            return host.contains("youtube.com")
+                    || host.contains("youtu.be");
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

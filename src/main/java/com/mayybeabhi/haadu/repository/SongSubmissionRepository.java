@@ -26,5 +26,6 @@ public interface SongSubmissionRepository extends JpaRepository<SongSubmission, 
 """) List<SongSubmission> findUnusedSongsByRoomId(UUID roomId);
     List<SongSubmission> findByRoomIdAndUserIdOrderByCreatedAtAsc(UUID roomId,UUID userId);
     List<SongSubmission> findByRoomId(UUID roomId);
+    boolean existsByRoomIdAndYoutubeUrl(UUID roomId, String youtubeUrl);
     
 }

@@ -35,6 +35,10 @@ export default function SongSubmissionPanel({
 
   const [fetchError, setFetchError] = useState('')
 
+  const [errors, setErrors] = useState(
+    () => Array(songCount).fill('')
+  )
+
   const loadExisting = async () => {
 
     if (!roomCode) return
@@ -99,6 +103,10 @@ export default function SongSubmissionPanel({
 
     setSongs(next)
 
+    const nextErrors = [...errors]
+    nextErrors[index] = ''
+    setErrors(nextErrors)
+
     if (statuses[index] === 'error') {
 
       const nextStatuses = [...statuses]
@@ -160,14 +168,22 @@ export default function SongSubmissionPanel({
 
     } catch (e) {
 
-      nextStatuses[index] = 'error'
+        nextStatuses[index] = 'error'
 
-      console.error(
-        'Submit error:',
-        e?.response?.data || e.message
-      )
+        const nextErrors = [...errors]
 
-    } finally {
+        nextErrors[index] =
+          e?.response?.data?.message ||
+          e?.response?.data ||
+          'Failed to submit song'
+
+        setErrors(nextErrors)
+
+        console.error(
+          'Submit error:',
+          e?.response?.data || e.message
+        )
+      } finally {
 
       setStatuses([...nextStatuses])
 
@@ -247,6 +263,20 @@ export default function SongSubmissionPanel({
                       : 'text',
                 }}
               />
+
+              {errors[i] && (
+                <div
+                  style={{
+                    color: '#e8453c',
+                    fontSize: '0.85rem',
+                    marginTop: 6,
+                    fontWeight: 700,
+                  }}
+                >
+                  {errors[i]}
+                </div>
+              )}
+
             </div>
 
             {isSubmitted(i) ? (
