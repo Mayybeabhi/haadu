@@ -147,11 +147,11 @@ Example:
 
 Input:
 
-https://www.youtube.com/watch?v=xxxxx
+https://www.youtube.com/watch?v=xyz
 
 Embedded Player:
 
-https://www.youtube.com/embed/xxxxx
+https://www.youtube.com/embed/xyz
 
 This allows all players to stay inside the game without constantly switching tabs.
 
