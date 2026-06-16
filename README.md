@@ -341,7 +341,7 @@ This separation keeps the application maintainable and scalable.
 - Vercel (Frontend)
 - Railway / Render / VPS (Backend)
 - Supabase PostgreSQL
-- 
+
 # Future Enhancements
 
 * User Accounts
