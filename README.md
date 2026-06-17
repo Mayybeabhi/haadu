@@ -339,7 +339,7 @@ This separation keeps the application maintainable and scalable.
 ### Deployment
 
 - Vercel (Frontend)
-- Render
+- Render (Backend)
 - Supabase PostgreSQL
 
 # Future Enhancements
