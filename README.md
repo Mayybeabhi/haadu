@@ -4,7 +4,7 @@
 
 ## The Story Behind Haadu
 
-Haadu started from a game my friends and I used to play manually whenever we met online.
+Haadu started from a game my friends and I used to play whenever we met online.
 
 The idea was simple: everyone would submit a few songs, and the group would try to guess who submitted each one.
 
