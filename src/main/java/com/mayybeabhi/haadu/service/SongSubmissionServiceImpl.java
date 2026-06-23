@@ -4,14 +4,13 @@ package com.mayybeabhi.haadu.service;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.RoomStatus;
 import com.mayybeabhi.haadu.entity.SongSubmission;
+import com.mayybeabhi.haadu.events.SongSubmittedEvent;
 import com.mayybeabhi.haadu.exception.*;
-import com.mayybeabhi.haadu.realtime.GameEvent;
-import com.mayybeabhi.haadu.realtime.GameEventPublisher;
-import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.RoomPlayerRepository;
 import com.mayybeabhi.haadu.repository.RoomRepository;
 import com.mayybeabhi.haadu.repository.SongSubmissionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.*;
@@ -21,13 +20,13 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
     private final SongSubmissionRepository songSubmissionRepository;
     private final RoomPlayerRepository roomPlayerRepository;
     private final RoomRepository roomRepository;
-    private final GameEventPublisher gameEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public SongSubmissionServiceImpl(SongSubmissionRepository songSubmissionRepository,RoomPlayerRepository roomPlayerRepository, RoomRepository roomRepository,GameEventPublisher gameEventPublisher){
+    public SongSubmissionServiceImpl(SongSubmissionRepository songSubmissionRepository,RoomPlayerRepository roomPlayerRepository, RoomRepository roomRepository, ApplicationEventPublisher eventPublisher){
         this.songSubmissionRepository=songSubmissionRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.roomRepository=roomRepository;
-        this.gameEventPublisher=gameEventPublisher;
+        this.eventPublisher=eventPublisher;
     }
 
     @Override
@@ -65,8 +64,7 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
 
         songSubmissionRepository.save(song);
         
-        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.SONG_SUBMITTED,Map.of("userId", userId, "roomCode", roomCode)));
-
+        eventPublisher.publishEvent(new SongSubmittedEvent(roomCode));
 
 
 
@@ -76,8 +74,7 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
     @Transactional
     public List<SongSubmission> getUserRoomSongs(String roomCode,UUID userId){
         UUID roomId= roomRepository.findByRoomCode(roomCode).get().getId();
-        List<SongSubmission> list= songSubmissionRepository.findByRoomIdAndUserIdOrderByCreatedAtAsc(roomId,userId);
-        return list;
+        return songSubmissionRepository.findByRoomIdAndUserIdOrderByCreatedAtAsc(roomId,userId);
     }
 
     @Override
@@ -120,7 +117,7 @@ public class SongSubmissionServiceImpl implements SongSubmissionService{
 
         songSubmissionRepository.save(song);
 
-        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.SONG_SUBMITTED, Map.of("userId", userId, "roomCode", roomCode)));
+        eventPublisher.publishEvent(new SongSubmittedEvent(roomCode));
     }
 
     @Override

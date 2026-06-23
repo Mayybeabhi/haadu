@@ -3,6 +3,10 @@ package com.mayybeabhi.haadu.service;
 import com.mayybeabhi.haadu.dto.RoomPlayerResponse;
 import com.mayybeabhi.haadu.dto.UpdateRoomSettingsRequest;
 import com.mayybeabhi.haadu.entity.*;
+import com.mayybeabhi.haadu.events.GameStartedEvent;
+import com.mayybeabhi.haadu.events.PlayerJoinedEvent;
+import com.mayybeabhi.haadu.events.RoundClosedEvent;
+import com.mayybeabhi.haadu.events.RoundStartedEvent;
 import com.mayybeabhi.haadu.exception.*;
 import com.mayybeabhi.haadu.realtime.GameEvent;
 import com.mayybeabhi.haadu.realtime.GameEventPublisher;
@@ -10,6 +14,7 @@ import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
 import com.mayybeabhi.haadu.security.SecurityUtils;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import com.mayybeabhi.haadu.dto.GameStateResponse;
 import com.mayybeabhi.haadu.dto.GuessResponse;
@@ -20,30 +25,30 @@ import java.util.*;
 
 
 @Service
-public class RoomServiceImpl implements RoomService{
+public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final RoomPlayerRepository roomPlayerRepository;
     private final UserRepository userRepository;
     private final SongSubmissionRepository songSubmissionRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
-    private final GameEventPublisher gameEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,UserRepository userRepository,SongSubmissionRepository songSubmissionRepository,RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
-        this.roomRepository=roomRepository;
-        this.roomPlayerRepository=roomPlayerRepository;
-        this.userRepository=userRepository;
-        this.songSubmissionRepository=songSubmissionRepository;
-        this.roundRepository=roundRepository;
-        this.guessRepository=guessRepository;
-        this.gameEventPublisher=gameEventPublisher;
+    public RoomServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository, UserRepository userRepository, SongSubmissionRepository songSubmissionRepository, RoundRepository roundRepository, GuessRepository guessRepository,  ApplicationEventPublisher eventPublisher) {
+        this.roomRepository = roomRepository;
+        this.roomPlayerRepository = roomPlayerRepository;
+        this.userRepository = userRepository;
+        this.songSubmissionRepository = songSubmissionRepository;
+        this.roundRepository = roundRepository;
+        this.guessRepository = guessRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
     @Transactional
-    public Room createRoom(UUID adminUserId){
+    public Room createRoom(UUID adminUserId) {
 
-        if(!userRepository.existsById(adminUserId)){
+        if (!userRepository.existsById(adminUserId)) {
             throw new UserNotFoundException("User not found!");
         }
 
@@ -60,7 +65,7 @@ public class RoomServiceImpl implements RoomService{
 
         Room savedRoom = roomRepository.save(room);
 
-        RoomPlayer adminPlayer=new RoomPlayer();
+        RoomPlayer adminPlayer = new RoomPlayer();
         adminPlayer.setRoomId(room.getId());
         adminPlayer.setUserId(adminUserId);
         adminPlayer.setScore(0);
@@ -69,81 +74,79 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public Room getRoomByCode(String roomCode){
+    public Room getRoomByCode(String roomCode) {
         return roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
     }
 
-    private String generateRoomCode(){
-        return UUID.randomUUID().toString().substring(0,5).toUpperCase();
+    private String generateRoomCode() {
+        return UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
     @Override
     @Transactional
-    public Room joinRoom(String roomCode,UUID userID){
-      Room room = getRoomByCode(roomCode);
+    public Room joinRoom(String roomCode, UUID userID) {
+        Room room = getRoomByCode(roomCode);
 
-      if(!userRepository.existsById(userID)){
+        if (!userRepository.existsById(userID)) {
             throw new UserNotFoundException("User not found!");
-      }
+        }
 
-      if(roomPlayerRepository.existsByRoomIdAndUserId(room.getId(),userID)){
-          throw new UserAlreadyInRoomException("User already present in room");
-      }
-      if (roomPlayerRepository.countByRoomId(room.getId())>=room.getMaxPlayers()){
-          throw new RoomFullException("Room full!");
-      }
+        if (roomPlayerRepository.existsByRoomIdAndUserId(room.getId(), userID)) {
+            throw new UserAlreadyInRoomException("User already present in room");
+        }
+        if (roomPlayerRepository.countByRoomId(room.getId()) >= room.getMaxPlayers()) {
+            throw new RoomFullException("Room full!");
+        }
 
         if (room.getStatus() != RoomStatus.WAITING) {
             throw new IllegalStateException("Cannot join room after game has started");
         }
 
 
-        RoomPlayer player=new RoomPlayer();
-      player.setRoomId(room.getId());
-      player.setUserId(userID);
-      player.setScore(0);
+        RoomPlayer player = new RoomPlayer();
+        player.setRoomId(room.getId());
+        player.setUserId(userID);
+        player.setScore(0);
 
-      roomPlayerRepository.save(player);
-      
-    gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.PLAYER_JOINED, Map.of("userId", userID)));
-    return room;
+        roomPlayerRepository.save(player);
+
+        eventPublisher.publishEvent(new PlayerJoinedEvent(roomCode, userID));
+        return room;
     }
-    
+
     @Override
     @Transactional
-    public Room updateRoomSettings(String roomCode, UpdateRoomSettingsRequest request){
-        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Invalid room code, room not found"));
-        UUID adminUserUUID= SecurityUtils.getCurrentUserId();
+    public Room updateRoomSettings(String roomCode, UpdateRoomSettingsRequest request) {
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Invalid room code, room not found"));
+        UUID adminUserUUID = SecurityUtils.getCurrentUserId();
 
-        if(!room.getAdminUserId().equals(adminUserUUID)){
+        if (!room.getAdminUserId().equals(adminUserUUID)) {
             throw new UserNotAdminException("Only admin of the room can edit settings");
         }
 
-        if (!room.getStatus().equals(RoomStatus.WAITING)){
+        if (!room.getStatus().equals(RoomStatus.WAITING)) {
             throw new InvalidGameStatusException("Cannot update settings after game has started");
         }
 
         room.setRoundTimerEnabled(request.getIsRoundTimerEnabled());
-        if(request.getIsRoundTimerEnabled()){
-            if (request.getRoundDuration()==null||request.getRoundDuration()<=0){
+        if (request.getIsRoundTimerEnabled()) {
+            if (request.getRoundDuration() == null || request.getRoundDuration() <= 0) {
                 throw new BusinessRuleException("Round duration must be greater than 0");
             }
 
             room.setRoundTimer(request.getRoundDuration());
-        }
-        else {
+        } else {
             room.setRoundTimer(0);
         }
 
         room.setInBetweenRoundTimerEnabled(request.getIsInBetweenRoundTimerEnabled());
-        if(request.getIsInBetweenRoundTimerEnabled()){
-            if (request.getInBetweenRoundDuration()==null||request.getInBetweenRoundDuration()<=0){
+        if (request.getIsInBetweenRoundTimerEnabled()) {
+            if (request.getInBetweenRoundDuration() == null || request.getInBetweenRoundDuration() <= 0) {
                 throw new BusinessRuleException("In Between Round duration must be greater than 0");
             }
 
             room.setInBetweenRoundTimer(request.getInBetweenRoundDuration());
-        }
-        else {
+        } else {
             room.setInBetweenRoundTimer(0);
         }
 
@@ -151,74 +154,72 @@ public class RoomServiceImpl implements RoomService{
         room.setSongCount(request.getSongCount());
 
 
-
         return roomRepository.save(room);
-
 
 
     }
 
     @Override
     @Transactional
-    public void startGame(String roomCode, UUID adminUserId){
-        Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
-        if (!room.getAdminUserId().equals(adminUserId)){
+    public void startGame(String roomCode, UUID adminUserId) {
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        if (!room.getAdminUserId().equals(adminUserId)) {
             throw new UserNotAdminException("Only admins can start the game!");
         }
 
-        if(!room.getStatus().equals(RoomStatus.WAITING)){
+        if (!room.getStatus().equals(RoomStatus.WAITING)) {
             throw new InvalidGameStatusException("Invalid game status");
         }
 
-        long roomPlayersCount=roomPlayerRepository.countByRoomId(room.getId());
+        long roomPlayersCount = roomPlayerRepository.countByRoomId(room.getId());
 
-        if (roomPlayersCount<2){
+        if (roomPlayersCount < 2) {
             throw new InvalidGameStatusException("Not enough players to start the game");
         }
 
-        if(roomPlayersCount*room.getSongCount()!=songSubmissionRepository.countByRoomId(room.getId())){
+        if (roomPlayersCount * room.getSongCount() != songSubmissionRepository.countByRoomId(room.getId())) {
             throw new InvalidGameStatusException("All users have not submitted the required number of songs");
         }
 
         room.setStatus(RoomStatus.PLAYING);
         roomRepository.save(room);
 
-        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.GAME_STARTED, Map.of()));
+        eventPublisher.publishEvent(new GameStartedEvent(roomCode));
     }
 
     @Override
     @Transactional
-    public void startRound(String roomCode,UUID adminUserId){
-        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
+    public void startRound(String roomCode, UUID adminUserId) {
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found!"));
 
-        if (!room.getAdminUserId().equals(adminUserId)){
+        if (!room.getAdminUserId().equals(adminUserId)) {
             throw new UserNotAdminException("Only admins can start a round");
         }
 
-        if(!room.getStatus().equals(RoomStatus.PLAYING)){
+        if (!room.getStatus().equals(RoomStatus.PLAYING)) {
             throw new InvalidGameStatusException("Game has not started");
         }
 
-        if(roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING)){
+        if (roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING)) {
             throw new InvalidGameStatusException("A round is already active");
         }
 
-        long countRounds=roundRepository.countByRoomId(room.getId());
+        long countRounds = roundRepository.countByRoomId(room.getId());
 
-        if (countRounds>=songSubmissionRepository.countByRoomId(room.getId())){
+        if (countRounds >= songSubmissionRepository.countByRoomId(room.getId())) {
             throw new InvalidGameStatusException("All rounds have been completed");
         }
 
-        List<SongSubmission> unusedSongs=songSubmissionRepository.findUnusedSongsByRoomId(room.getId());
+        List<SongSubmission> unusedSongs = songSubmissionRepository.findUnusedSongsByRoomId(room.getId());
 
-        if(unusedSongs.isEmpty()){
+        if (unusedSongs.isEmpty()) {
             throw new InvalidGameStatusException("No songs available");
         }
 
-        SongSubmission selectedSong= unusedSongs.get(new Random().nextInt(unusedSongs.size()));
-        int roundNumber= (int)countRounds+1;
+        SongSubmission selectedSong = unusedSongs.get(new Random().nextInt(unusedSongs.size()));
+        int roundNumber = (int) countRounds + 1;
 
-        Round round=new Round();
+        Round round = new Round();
 
         round.setRoomId(room.getId());
         round.setRoundNumber(roundNumber);
@@ -228,55 +229,48 @@ public class RoomServiceImpl implements RoomService{
 
         roundRepository.save(round);
 
-        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(
-    GameEventType.ROUND_STARTED,
-    Map.of(
-        "roundNumber", roundNumber,
-        "roundId", round.getId(),
-        "songId", selectedSong.getId(),
-        "youtubeUrl", selectedSong.getYoutubeUrl()
-    )
-));
-  }
+        eventPublisher.publishEvent(new RoundStartedEvent(roomCode, roundNumber, round.getId(), selectedSong.getId(), selectedSong.getYoutubeUrl()));
+
+    }
 
     @Override
     @Transactional
-    public void endRound(String roomCode, UUID adminUserId, String roundId){
+    public void endRound(String roomCode, UUID adminUserId, String roundId) {
 
-        Room room= roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found!"));
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found!"));
 
 
-        if (!room.getAdminUserId().equals(adminUserId)){
+        if (!room.getAdminUserId().equals(adminUserId)) {
             throw new UserNotAdminException("Only admins can end a round");
         }
 
-        if(!room.getStatus().equals(RoomStatus.PLAYING)){
+        if (!room.getStatus().equals(RoomStatus.PLAYING)) {
             throw new InvalidGameStatusException("Game is not active");
         }
 
-        Round round= roundRepository.findById(UUID.fromString(roundId)).orElseThrow(()-> new RoundNotFoundException("Round not found"));
+        Round round = roundRepository.findById(UUID.fromString(roundId)).orElseThrow(() -> new RoundNotFoundException("Round not found"));
 
-        if(!round.getRoomId().equals(room.getId())){
+        if (!round.getRoomId().equals(room.getId())) {
             throw new InvalidGameStatusException("Round does not belong to the room");
         }
 
-        if(!round.getStatus().equals(RoundStatus.PLAYING)){
+        if (!round.getStatus().equals(RoundStatus.PLAYING)) {
             throw new InvalidGameStatusException("Round already closed");
         }
 
-        if(roomPlayerRepository.countByRoomId(room.getId())!=guessRepository.countByRoundId(round.getId())){
+        if (roomPlayerRepository.countByRoomId(room.getId()) != guessRepository.countByRoundId(round.getId())) {
             throw new BusinessRuleException("Everyone has not yet guessed");
         }
 
-        SongSubmission song=songSubmissionRepository.findById(round.getSongSubmissionId()).orElseThrow(()->new InvalidGameStatusException("Song submission missing"));
+        SongSubmission song = songSubmissionRepository.findById(round.getSongSubmissionId()).orElseThrow(() -> new InvalidGameStatusException("Song submission missing"));
 
-        UUID rightUserId=song.getUserId();
+        UUID rightUserId = song.getUserId();
 
         round.setStatus(RoundStatus.REVEALED);
         round.setEndedAt(Instant.now());
         roundRepository.save(round);
 
-        gameEventPublisher.sendToRoom(roomCode, GameEvent.of(GameEventType.ROUND_CLOSED,Map.of("correctUserId",rightUserId)));
+        eventPublisher.publishEvent(new RoundClosedEvent(roomCode, rightUserId));
     }
 
     @Override
@@ -294,8 +288,7 @@ public class RoomServiceImpl implements RoomService{
         }*/
 
 
-        boolean activeRoundExists =
-                roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING);
+        boolean activeRoundExists = roundRepository.existsByRoomIdAndStatus(room.getId(), RoundStatus.PLAYING);
 
         if (activeRoundExists) {
             throw new InvalidGameStatusException("Cannot finish while a round is active");
@@ -312,152 +305,120 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public List<RoomPlayerResponse> getPlayers(String roomCode){
+    public List<RoomPlayerResponse> getPlayers(String roomCode) {
 
-        Room room=roomRepository.findByRoomCode(roomCode).orElseThrow(()->new RoomNotFoundException("Room not found"));
-        List<RoomPlayer> players= roomPlayerRepository.findByRoomId(room.getId());
-        return players.stream().map(p->{
-            User user= userRepository.findById(p.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
-            long songsSubmitted= songSubmissionRepository.countByRoomIdAndUserId(room.getId(), user.getId());
-            return new RoomPlayerResponse(user.getId(),user.getUsername(),room.getAdminUserId().equals(user.getId()),songsSubmitted);
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        List<RoomPlayer> players = roomPlayerRepository.findByRoomId(room.getId());
+        return players.stream().map(p -> {
+            User user = userRepository.findById(p.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+            long songsSubmitted = songSubmissionRepository.countByRoomIdAndUserId(room.getId(), user.getId());
+            return new RoomPlayerResponse(user.getId(), user.getUsername(), room.getAdminUserId().equals(user.getId()), songsSubmitted);
 
         }).toList();
     }
 
     @Override
-@Transactional
-public GameStateResponse getRoomState(String roomCode) {
-    Room room = roomRepository.findByRoomCode(roomCode)
-            .orElseThrow(() -> new RoomNotFoundException("Room not found"));
+    @Transactional
+    public GameStateResponse getRoomState(String roomCode) {
+        Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
-    UUID roomId = room.getId();
+        UUID roomId = room.getId();
 
-    List<RoomPlayer> roomPlayers = roomPlayerRepository.findByRoomId(roomId);
+        List<RoomPlayer> roomPlayers = roomPlayerRepository.findByRoomId(roomId);
 
-    Optional<Round> activeRoundOpt = roundRepository.findByRoomIdAndStatus(roomId, RoundStatus.PLAYING);
-    Optional<Round> latestRoundOpt = roundRepository.findTopByRoomIdOrderByRoundNumberDesc(roomId);
+        Optional<Round> activeRoundOpt = roundRepository.findByRoomIdAndStatus(roomId, RoundStatus.PLAYING);
+        Optional<Round> latestRoundOpt = roundRepository.findTopByRoomIdOrderByRoundNumberDesc(roomId);
 
-    Optional<Round> currentRoundOpt = activeRoundOpt.isPresent() ? activeRoundOpt : latestRoundOpt;
+        Optional<Round> currentRoundOpt = activeRoundOpt.isPresent() ? activeRoundOpt : latestRoundOpt;
 
-Round currentRound = currentRoundOpt.orElse(null);
+        Round currentRound = currentRoundOpt.orElse(null);
 
-List<Guess> guesses = currentRoundOpt
-        .map(round -> guessRepository.findByRoundId(round.getId()))
-        .orElseGet(Collections::emptyList);
+        List<Guess> guesses = currentRoundOpt.map(round -> guessRepository.findByRoundId(round.getId())).orElseGet(Collections::emptyList);
 
-    Map<UUID, Guess> guessByUserId = new HashMap<>();
-    for (Guess guess : guesses) {
-        guessByUserId.put(guess.getGuessingUserId(), guess);
+        Map<UUID, Guess> guessByUserId = new HashMap<>();
+        for (Guess guess : guesses) {
+            guessByUserId.put(guess.getGuessingUserId(), guess);
+        }
+
+        List<PlayerGameStateDto> playerDtos = roomPlayers.stream().map(rp -> {
+            UUID userId = rp.getUserId();
+            User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+            Guess guess = guessByUserId.get(userId);
+            long songsSubmitted = songSubmissionRepository.countByRoomIdAndUserId(roomId, userId);
+
+            return PlayerGameStateDto.builder().userId(userId).username(user.getUsername()).isAdmin(room.getAdminUserId().equals(userId)).songsSubmitted((int) songsSubmitted).guessSubmitted(guess != null).guessTargetUserId(guess != null ? guess.getGuessedUserId() : null).build();
+        }).toList();
+
+        List<GuessResponse> guessDtos = guesses.stream().map(g -> new GuessResponse(g.getGuessingUserId(), g.getGuessedUserId())).toList();
+
+        return buildGameStateResponse(room, currentRound, playerDtos, guessDtos);
     }
 
-    List<PlayerGameStateDto> playerDtos = roomPlayers.stream().map(rp -> {
-        UUID userId = rp.getUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    private GameStateResponse buildGameStateResponse(Room room, Round currentRound, List<PlayerGameStateDto> playerDtos, List<GuessResponse> guessDtos) {
+        String phase = determinePhase(room, currentRound);
 
-        Guess guess = guessByUserId.get(userId);
-        long songsSubmitted = songSubmissionRepository.countByRoomIdAndUserId(roomId, userId);
+        UUID songId = null;
+        String currentSongUrl = null;
+        UUID revealedOwnerId = null;
+        Integer roundNumber = null;
+        UUID currentRoundId = null;
+        String roundStatus = null;
 
-        return PlayerGameStateDto.builder()
-                .userId(userId)
-                .username(user.getUsername())
-                .isAdmin(room.getAdminUserId().equals(userId))
-                .songsSubmitted((int) songsSubmitted)
-                .guessSubmitted(guess != null)
-                .guessTargetUserId(guess != null ? guess.getGuessedUserId() : null)
-                .build();
-    }).toList();
+        if (currentRound != null) {
+            roundNumber = currentRound.getRoundNumber();
+            currentRoundId = currentRound.getId();
+            roundStatus = currentRound.getStatus().name();
 
-    List<GuessResponse> guessDtos = guesses.stream().map(g ->
-            new GuessResponse(g.getGuessingUserId(), g.getGuessedUserId())
-    ).toList();
+            if (currentRound.getSongSubmissionId() != null) {
+                SongSubmission songSubmission = songSubmissionRepository.findById(currentRound.getSongSubmissionId()).orElse(null);
 
-    return buildGameStateResponse(room, currentRound, playerDtos, guessDtos);
-}
+                if (songSubmission != null) {
+                    songId = songSubmission.getId();
+                    currentSongUrl = songSubmission.getYoutubeUrl();
 
-private GameStateResponse buildGameStateResponse(
-        Room room,
-        Round currentRound,
-        List<PlayerGameStateDto> playerDtos,
-        List<GuessResponse> guessDtos
-) {
-    String phase = determinePhase(room, currentRound);
-
-    UUID songId = null;
-    String currentSongUrl = null;
-    UUID revealedOwnerId = null;
-    Integer roundNumber = null;
-    UUID currentRoundId = null;
-    String roundStatus = null;
-
-    if (currentRound != null) {
-        roundNumber = currentRound.getRoundNumber();
-        currentRoundId = currentRound.getId();
-        roundStatus = currentRound.getStatus().name();
-
-        if (currentRound.getSongSubmissionId() != null) {
-            SongSubmission songSubmission = songSubmissionRepository
-                    .findById(currentRound.getSongSubmissionId())
-                    .orElse(null);
-
-            if (songSubmission != null) {
-                songId = songSubmission.getId();
-                currentSongUrl = songSubmission.getYoutubeUrl();
-
-                // anti-cheat: only reveal owner after round is revealed
-                if (currentRound.getStatus() == RoundStatus.REVEALED) {
-                    revealedOwnerId = songSubmission.getUserId();
+                    // anti-cheat: only reveal owner after round is revealed
+                    if (currentRound.getStatus() == RoundStatus.REVEALED) {
+                        revealedOwnerId = songSubmission.getUserId();
+                    }
                 }
             }
         }
+
+        return GameStateResponse.builder().roomCode(room.getRoomCode()).roomStatus(room.getStatus().name()).phase(phase)
+
+                .roundNumber(roundNumber).currentRoundId(currentRoundId).roundStatus(roundStatus)
+
+                .songId(songId).currentSongUrl(currentSongUrl).revealedOwnerId(revealedOwnerId)
+
+                .maxPlayers(room.getMaxPlayers()).songCount(room.getSongCount())
+
+                .breakTimeEnabled(room.isInBetweenRoundTimerEnabled()).breakTimeSeconds(room.getInBetweenRoundTimer())
+
+                .roundTimeEnabled(room.isRoundTimerEnabled()).roundTimeSeconds(room.getRoundTimer())
+
+                .players(playerDtos).guesses(guessDtos).build();
     }
 
-    return GameStateResponse.builder()
-            .roomCode(room.getRoomCode())
-            .roomStatus(room.getStatus().name())
-            .phase(phase)
+    private String determinePhase(Room room, Round currentRound) {
+        if (room.getStatus() == RoomStatus.FINISHED) {
+            return "FINISHED";
+        }
 
-            .roundNumber(roundNumber)
-            .currentRoundId(currentRoundId)
-            .roundStatus(roundStatus)
+        if (room.getStatus() == RoomStatus.WAITING) {
+            return "LOBBY";
+        }
 
-            .songId(songId)
-            .currentSongUrl(currentSongUrl)
-            .revealedOwnerId(revealedOwnerId)
+        if (currentRound == null) {
+            return "WAITING_ROUND";
+        }
 
-            .maxPlayers(room.getMaxPlayers())
-            .songCount(room.getSongCount())
-
-            .breakTimeEnabled(room.isInBetweenRoundTimerEnabled())
-            .breakTimeSeconds(room.getInBetweenRoundTimer())
-
-            .roundTimeEnabled(room.isRoundTimerEnabled())
-            .roundTimeSeconds(room.getRoundTimer())
-
-            .players(playerDtos)
-            .guesses(guessDtos)
-            .build();
-}
-
-private String determinePhase(Room room, Round currentRound) {
-    if (room.getStatus() == RoomStatus.FINISHED) {
-        return "FINISHED";
+        return switch (currentRound.getStatus()) {
+            case SUBMISSION -> "WAITING_ROUND";
+            case PLAYING -> "PLAYING";
+            case GUESSING -> "PLAYING";
+            case REVEALED -> "REVEALED";
+        };
     }
-
-    if (room.getStatus() == RoomStatus.WAITING) {
-        return "LOBBY";
-    }
-
-    if (currentRound == null) {
-        return "WAITING_ROUND";
-    }
-
-    return switch (currentRound.getStatus()) {
-        case SUBMISSION -> "WAITING_ROUND";
-        case PLAYING -> "PLAYING";
-        case GUESSING -> "PLAYING";
-        case REVEALED -> "REVEALED";
-    };
-}
 
 }

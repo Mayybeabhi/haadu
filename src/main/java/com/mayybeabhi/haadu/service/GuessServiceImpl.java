@@ -5,14 +5,12 @@ import com.mayybeabhi.haadu.entity.Guess;
 import com.mayybeabhi.haadu.entity.Room;
 import com.mayybeabhi.haadu.entity.Round;
 import com.mayybeabhi.haadu.entity.RoundStatus;
+import com.mayybeabhi.haadu.events.GuessSubmittedEvent;
 import com.mayybeabhi.haadu.exception.*;
-import com.mayybeabhi.haadu.realtime.GameEvent;
-import com.mayybeabhi.haadu.realtime.GameEventPublisher;
-import com.mayybeabhi.haadu.realtime.GameEventType;
 import com.mayybeabhi.haadu.repository.*;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,14 +19,14 @@ public class GuessServiceImpl implements GuessService{
     private final RoomPlayerRepository roomPlayerRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
-    private final GameEventPublisher gameEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,  RoundRepository roundRepository,GuessRepository guessRepository,GameEventPublisher gameEventPublisher){
+    public GuessServiceImpl(RoomRepository roomRepository, RoomPlayerRepository roomPlayerRepository,  RoundRepository roundRepository,GuessRepository guessRepository, ApplicationEventPublisher eventPublisher){
         this.roomRepository=roomRepository;
         this.roomPlayerRepository=roomPlayerRepository;
         this.roundRepository=roundRepository;
         this.guessRepository=guessRepository;
-        this.gameEventPublisher=gameEventPublisher;
+        this.eventPublisher=eventPublisher;
     }
 
     public void submitGuess(String roomCode,String roundId,UUID guessingUserId, SubmitGuessRequest request){
@@ -70,7 +68,6 @@ public class GuessServiceImpl implements GuessService{
         guess.setRoundId(roundUUID);
         guessRepository.save(guess);
 
-        gameEventPublisher.sendToRoom(roomCode,GameEvent.of(GameEventType.GUESS_SUBMITTED,Map.of( "guessingUserId", guessingUserId, "guessedUserId", guessedUserId)));
-
+        eventPublisher.publishEvent(new GuessSubmittedEvent(roomCode,guessingUserId,guessedUserUUID));
     }
 }

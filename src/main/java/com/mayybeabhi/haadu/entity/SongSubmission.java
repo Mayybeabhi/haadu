@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "song_submissions",uniqueConstraints = @UniqueConstraint(columnNames = {"room_id","user_id","youtube_url"}))
+@Table(name = "song_submissions", uniqueConstraints = @UniqueConstraint(columnNames = {"room_id", "user_id", "youtube_url"}))
 public class SongSubmission {
 
     @Id
@@ -28,7 +28,7 @@ public class SongSubmission {
     private Instant createdAt;
 
     @PrePersist
-    void onCreate(){
-        this.createdAt=Instant.now();
+    void onCreate() {
+        this.createdAt = Instant.now();
     }
 }
