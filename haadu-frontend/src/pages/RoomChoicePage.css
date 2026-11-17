@@ -1,0 +1,552 @@
+
+/* =========================================
+   HAADU ROOM SELECTION
+   Retro CRT / Analog Music Aesthetic
+========================================= */
+
+.room-choice-page {
+  --yellow: #ffd600;
+  --pink: #ff168a;
+  --cream: #f2dfc4;
+  --green: #27ff86;
+
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+
+  width: 100%;
+  height: 100dvh;
+
+  padding: 0 3.5%;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #191614 0%,
+      #0b0b0b 65%,
+      #050505 100%
+    );
+
+  color: var(--cream);
+
+  font-family: 'Arial Narrow', 'Roboto Condensed', sans-serif;
+}
+
+.room-choice-page,
+.room-choice-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CRT TEXTURE
+========================================= */
+
+.room-choice-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  pointer-events: none;
+  opacity: 0.20;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.75) 4px,
+    rgba(0, 0, 0, 0.75) 5px
+  );
+
+  background-size: 100% 5px;
+
+  animation: room-crt-scan 8s linear infinite;
+}
+
+@keyframes room-crt-scan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 100px;
+  }
+}
+
+.room-choice-page::after {
+  content: '';
+
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+
+  pointer-events: none;
+  opacity: 0.12;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.room-choice-nav {
+  height: 64px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #aaa;
+
+  position: relative;
+  z-index: 2;
+}
+
+.room-choice-nav::after {
+  content: '';
+
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    transparent 70%
+  );
+}
+
+.room-choice-logo {
+  color: var(--yellow);
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 30px;
+  letter-spacing: -1px;
+
+  text-decoration: none;
+  text-shadow: 2px 2px #6d4700;
+}
+
+.room-choice-logo span {
+  color: var(--pink);
+}
+
+.room-choice-nav nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.room-choice-user {
+  color: var(--cream);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.room-choice-equalizer {
+  color: var(--pink);
+  font-size: 18px;
+  letter-spacing: -4px;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.room-choice-content {
+  flex: 1;
+  min-height: 0;
+
+  width: 100%;
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+
+  align-items: center;
+  gap: 7%;
+
+  padding: 35px 2%;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   HEADING
+========================================= */
+
+.room-choice-heading {
+  min-width: 0;
+}
+
+.room-choice-eyebrow {
+  color: var(--pink);
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  margin-bottom: 22px;
+}
+
+.room-choice-heading h1 {
+  margin: 0;
+
+  color: var(--cream);
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(55px, 6vw, 86px);
+
+  line-height: 0.91;
+  font-style: italic;
+
+  transform: skewX(-3deg);
+
+  text-shadow: 2px 2px #493a2e;
+}
+
+.room-choice-heading h1 span {
+  color: var(--yellow);
+}
+
+.room-choice-underline {
+  height: 4px;
+  width: 180px;
+
+  margin: 20px 0 25px 55px;
+
+  background: var(--yellow);
+  transform: rotate(-3deg);
+}
+
+.room-choice-heading p {
+  color: #c6b9a8;
+
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================================
+   OPTION CARDS
+========================================= */
+
+.room-choice-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 24px;
+  width: 100%;
+}
+
+.room-option {
+  min-width: 0;
+  min-height: 280px;
+
+  padding: 24px 22px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  text-align: left;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.025),
+      transparent 60%
+    ),
+    rgba(0, 0, 0, 0.35);
+
+  border: 1px solid rgba(242, 223, 196, 0.35);
+  border-radius: 0;
+
+  color: var(--cream);
+
+  cursor: pointer;
+
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.create-option {
+  border: 1px solid var(--green);
+}
+
+.join-option {
+  border: 1px solid var(--pink);
+}
+
+.room-option::before {
+  content: '';
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  opacity: 0.08;
+
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.15) 5px
+  );
+}
+
+.room-option:hover {
+  transform: translateY(-5px);
+}
+
+.create-option:hover {
+  background: rgba(39, 255, 134, 0.07);
+  box-shadow: 5px 5px 0 rgba(39, 255, 134, 0.35);
+}
+
+.join-option:hover {
+  background: rgba(255, 22, 138, 0.07);
+  box-shadow: 5px 5px 0 rgba(255, 22, 138, 0.35);
+}
+
+/* =========================================
+   CARD TOP
+========================================= */
+
+.room-option-top {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 25px;
+}
+
+.room-option-number {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.create-option .room-option-number,
+.create-option .room-option-icon {
+  color: var(--green);
+}
+
+.join-option .room-option-number,
+.join-option .room-option-icon {
+  color: var(--pink);
+}
+
+.room-option-icon {
+  font-size: 35px;
+  line-height: 1;
+}
+
+/* =========================================
+   CARD TITLE
+========================================= */
+
+.room-option-title {
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(35px, 3.4vw, 48px);
+
+  font-weight: 900;
+  line-height: 0.95;
+
+  margin-bottom: 16px;
+}
+
+.create-option .room-option-title {
+  color: var(--green);
+}
+
+.join-option .room-option-title {
+  color: var(--pink);
+}
+
+.room-option p {
+  color: #c6b9a8;
+
+  font-size: 13px;
+  line-height: 1.6;
+
+  margin-bottom: 25px;
+}
+
+/* =========================================
+   CARD ACTION
+========================================= */
+
+.room-option-action {
+  width: 100%;
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(242, 223, 196, 0.3);
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.create-option .room-option-action {
+  color: var(--green);
+}
+
+.join-option .room-option-action {
+  color: var(--pink);
+}
+
+.room-option-arrow {
+  font-size: 25px;
+  transition: transform 0.2s ease;
+}
+
+.room-option:hover .room-option-arrow {
+  transform: translateX(5px);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.room-choice-footer {
+  min-height: 34px;
+  flex-shrink: 0;
+
+  margin: 0 -3.8%;
+  padding: 8px 3.8%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  background: var(--pink);
+  color: #080808;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .room-choice-content {
+    grid-template-columns: 1fr;
+    gap: 35px;
+
+    align-content: center;
+  }
+
+  .room-choice-heading h1 {
+    font-size: 55px;
+  }
+
+  .room-choice-options {
+    max-width: 650px;
+  }
+
+  .room-option {
+    min-height: 250px;
+  }
+
+  .room-choice-footer {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .room-choice-page {
+    padding: 0 18px;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .room-choice-nav {
+    height: 58px;
+  }
+
+  .room-choice-logo {
+    font-size: 25px;
+  }
+
+  .room-choice-content {
+    padding: 35px 0;
+    gap: 30px;
+  }
+
+  .room-choice-heading h1 {
+    font-size: 52px;
+  }
+
+  .room-choice-options {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .room-option {
+    min-height: 220px;
+  }
+
+  .room-option-title {
+    font-size: 42px;
+  }
+
+  .room-choice-footer {
+    margin: 0 -18px;
+    padding: 10px 15px;
+
+    justify-content: center;
+    flex-wrap: wrap;
+
+    font-size: 9px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .room-choice-scanlines {
+    animation: none;
+  }
+
+  .room-option,
+  .room-option-arrow {
+    transition: none;
+  }
+}
+

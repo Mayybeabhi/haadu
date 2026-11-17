@@ -1,39 +1,73 @@
-import { useNavigate } from "react-router-dom";
-import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
 
-export default function HomePage(){
-    const navigate=useNavigate()
+import { useNavigate } from 'react-router-dom'
+import './HomePage.css'
 
-    return(
-        <div className="page-shell center">
-      <div className="big-center-card stack animate-in">
-        <img
-          src="/haadu-logo.svg"
-          alt="haadu"
-          style={{
-            width: "180px",
-            maxWidth: "90%",
-            height: "auto",
-            display: "block",
-            margin: "0 auto 12px auto"
-          }}
-        />
-        <div className="page-title">haadu</div>
-        <div className="page-subtitle">
-          guess maadu - multiplayer song guessing game
+export default function HomePage() {
+  const navigate = useNavigate()
+
+  return (
+    <main className="home-page">
+      {/* CRT scanlines */}
+      <div className="home-crt-overlay" />
+
+      <header className="home-nav">
+        <a href="/" className="home-logo">
+          HAADU<span>.</span>
+        </a>
+
+        <nav>
+          <a href="#how-to-play">HOW TO PLAY</a>
+          <a href="#about">ABOUT</a>
+          <span className="home-equalizer">▮ ▮ ▮</span>
+        </nav>
+      </header>
+
+      <section className="home-hero">
+        <div className="home-hero-copy">
+          <div className="home-eyebrow">
+            <span>▶</span>
+            A MULTIPLAYER MUSIC GUESSING GAME
+          </div>
+
+          <h1>
+            WHO KNOWS
+            <br />
+            YOUR MUSIC BETTER?
+            <br />
+            <span>GUESS. PLAY. COMPETE.</span>
+          </h1>
+
+          <p>
+            Bring your favourite songs. Challenge your friends.
+            <br />
+            Find out who really knows everyone's music taste.
+          </p>
+
+          <button
+            className="home-play-button"
+            onClick={() => navigate('/guest')}
+          >
+            <span>▶</span>
+            PLAY NOW
+          </button>
         </div>
 
-        <Card className="stack" style={{ marginTop: 24 }}>
-        <Button color="green" onClick={()=> navigate('/guest')}>continue as guest</Button>
-        <Button color="white" disabled>
-            🔐 login (later)
-          </Button>
-          <Button color="white" disabled>
-            ✍️ sign up (later)
-          </Button>
-          </Card>
-          </div>
-          </div>
-    )
+        <div className="home-hero-art">
+          <img
+            src="/images/home-hero-collage.png"
+            alt="Vintage music collage with a woman wearing headphones and a cassette"
+            className="home-collage-image"
+          />
+        </div>
+      </section>
+
+      <footer className="home-bottom-strip">
+        <span>♫ BRING YOUR SONGS</span>
+        <span>■ GUESS THE SUBMITTER</span>
+        <span>■ SCORE POINTS</span>
+        <span>■ CROWN THE MUSIC EXPERT</span>
+        <span>♫</span>
+      </footer>
+    </main>
+  )
 }

@@ -317,3 +317,17 @@ input {
 .vote-pill.waiting {
   background: #fff8e8;
 }
+
+/* =========================================
+   HAADU — GLOBAL TEXT SELECTION
+========================================= */
+
+::selection {
+  background: #ff168a;
+  color: #090909;
+}
+
+::-moz-selection {
+  background: #ff168a;
+  color: #090909;
+}

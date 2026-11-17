@@ -1,0 +1,538 @@
+
+/* =========================================
+   HAADU HOME PAGE
+   Shared Retro CRT / Analog Music Aesthetic
+========================================= */
+
+.home-page {
+  --yellow: #ffd600;
+  --pink: #ff168a;
+  --cream: #f2dfc4;
+  --black: #090909;
+  --green: #27ff86;
+
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+
+  padding: 0 3.5%;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #191614 0%,
+      #0b0b0b 65%,
+      #050505 100%
+    );
+
+  color: var(--cream);
+
+  font-family: 'Arial Narrow', 'Roboto Condensed', sans-serif;
+}
+
+.home-page,
+.home-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CRT SCANLINES
+   Same as Guest Entry page
+========================================= */
+
+.home-crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  pointer-events: none;
+  opacity: 0.20;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.75) 4px,
+    rgba(0, 0, 0, 0.75) 5px
+  );
+
+  background-size: 100% 5px;
+
+  animation: home-crt-scan 8s linear infinite;
+}
+
+@keyframes home-crt-scan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 100px;
+  }
+}
+
+/* =========================================
+   FILM GRAIN
+   Same as Guest Entry page
+========================================= */
+
+.home-page::after {
+  content: '';
+
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+
+  pointer-events: none;
+  opacity: 0.12;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+/* =========================================
+   HEADER
+   Shared navigation styling
+========================================= */
+
+.home-nav {
+  height: 64px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #aaa;
+
+  position: relative;
+  z-index: 2;
+}
+
+.home-nav::after {
+  content: '';
+
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    transparent 70%
+  );
+}
+
+.home-logo {
+  color: var(--yellow);
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 30px;
+  letter-spacing: -1px;
+
+  text-decoration: none;
+  text-shadow: 2px 2px #6d4700;
+}
+
+.home-logo span {
+  color: var(--pink);
+}
+
+.home-nav nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.home-nav nav a {
+  color: var(--cream);
+
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  transition: color 0.2s ease;
+}
+
+.home-nav nav a:hover {
+  color: var(--yellow);
+}
+
+.home-equalizer {
+  color: var(--pink);
+  font-size: 18px;
+  letter-spacing: -4px;
+  margin-left: 4px;
+}
+
+/* =========================================
+   HERO LAYOUT
+========================================= */
+
+.home-hero {
+  flex: 1;
+  min-height: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1.05fr);
+
+  align-items: center;
+  gap: 0;
+
+  max-width: 1500px;
+  width: 100%;
+
+  margin: 0 auto;
+  padding: 25px 1%;
+
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   LEFT CONTENT
+========================================= */
+
+.home-hero-copy {
+  position: relative;
+  z-index: 2;
+
+  min-width: 0;
+}
+
+.home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 7px 12px;
+
+  border: 1px solid var(--green);
+
+  color: var(--green);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  margin-bottom: 23px;
+
+  text-shadow: 0 0 5px rgba(39, 255, 134, 0.2);
+}
+
+.home-eyebrow span {
+  font-size: 15px;
+}
+
+/* =========================================
+   DISTRESSED HEADLINE
+========================================= */
+
+.home-hero-copy h1 {
+  margin: 0;
+
+  color: #dfcbb0;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(44px, 5.15vw, 74px);
+
+  line-height: 0.94;
+  letter-spacing: -0.4px;
+
+  font-style: italic;
+  font-weight: 900;
+
+  opacity: 0.94;
+
+  text-shadow:
+    1px 1px rgba(0, 0, 0, 0.65),
+    2px 2px rgba(95, 70, 48, 0.35),
+    -1px 0 rgba(255, 235, 205, 0.10);
+
+  filter: contrast(0.91) saturate(0.78);
+
+  transform: skewX(-3deg);
+  transform-origin: left center;
+}
+
+.home-hero-copy h1 span {
+  display: inline-block;
+
+  margin-top: 5px;
+
+  color: #e9bd00;
+
+  text-shadow:
+    1px 1px rgba(0, 0, 0, 0.65),
+    2px 2px rgba(106, 79, 0, 0.4);
+
+  filter: saturate(0.85);
+}
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.home-hero-copy p {
+  margin-top: 20px;
+  margin-bottom: 0;
+
+  color: #c6b9a8;
+
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* =========================================
+   PLAY NOW BUTTON
+   Same visual language as Guest Entry
+========================================= */
+
+.home-play-button {
+  min-width: 225px;
+  min-height: 49px;
+
+  margin-top: 23px;
+  padding: 12px 22px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  background: var(--yellow);
+  color: #090909;
+
+  border: 0;
+  border-radius: 0;
+
+  box-shadow: 4px 4px 0 #8e7100;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 17px;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-play-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #8e7100;
+}
+
+.home-play-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #8e7100;
+}
+
+/* =========================================
+   RIGHT COLLAGE ARTWORK
+========================================= */
+
+.home-hero-art {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  margin-left: -3%;
+  width: 103%;
+}
+
+.home-collage-image {
+  display: block;
+
+  width: 116%;
+  max-width: 720px;
+  max-height: 100%;
+
+  height: auto;
+
+  object-fit: contain;
+  object-position: center;
+
+  transform: translateX(-3%) scale(1.035);
+
+  user-select: none;
+  -webkit-user-drag: none;
+
+  filter:
+    contrast(1.04)
+    saturate(0.94)
+    sepia(0.06);
+}
+
+/* =========================================
+   BOTTOM PINK INFORMATION STRIP
+   Same as Guest Entry page
+========================================= */
+
+.home-bottom-strip {
+  min-height: 34px;
+  flex-shrink: 0;
+
+  margin: 0 -3.8%;
+  padding: 8px 3.8%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  background: var(--pink);
+  color: #080808;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================
+   TEXT SELECTION
+========================================= */
+
+.home-page ::selection {
+  background: var(--pink);
+  color: #090909;
+}
+
+/* =========================================
+   TABLET RESPONSIVENESS
+========================================= */
+
+@media (max-width: 900px) {
+  .home-hero {
+    grid-template-columns: 1fr 0.9fr;
+    gap: 5px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(36px, 5vw, 54px);
+  }
+
+  .home-collage-image {
+    width: 120%;
+  }
+
+  .home-bottom-strip {
+    font-size: 10px;
+  }
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+========================================= */
+
+@media (max-width: 650px) {
+  .home-page {
+    padding: 0 18px;
+  }
+
+  .home-nav {
+    height: 58px;
+  }
+
+  .home-logo {
+    font-size: 25px;
+  }
+
+  .home-nav nav {
+    gap: 14px;
+  }
+
+  .home-nav nav a {
+    font-size: 9px;
+  }
+
+  .home-hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(180px, 0.8fr);
+
+    gap: 0;
+
+    padding: 30px 0 15px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(38px, 9vw, 54px);
+  }
+
+  .home-hero-copy p {
+    font-size: 12px;
+  }
+
+  .home-hero-art {
+    min-height: 0;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .home-collage-image {
+    width: min(100%, 360px);
+    max-height: 100%;
+    transform: none;
+  }
+
+  .home-play-button {
+    min-width: 190px;
+  }
+
+  .home-bottom-strip {
+    margin: 0 -18px;
+    padding: 10px 15px;
+
+    justify-content: center;
+    flex-wrap: wrap;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-crt-overlay {
+    animation: none;
+  }
+
+  .home-play-button {
+    transition: none;
+  }
+}
+
+::selection {
+  background: var(--crt-pink);
+  color: #090909;
+}
