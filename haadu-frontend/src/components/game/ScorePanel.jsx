@@ -1,3 +1,4 @@
+
 import Card from '../ui/Card'
 import Button from '../ui/Button'
 
@@ -6,199 +7,73 @@ export default function ScorePanel({
   scoringMode,
   onChangeMode,
 }) {
-
-  const sortedScores = [...scores]
-    .sort((a, b) => b.score - a.score)
+  const sortedScores = [...scores].sort(
+    (a, b) => b.score - a.score
+  )
 
   return (
-
-    <Card className="stack">
-
-      {/* HEADER */}
-
-      <div
-        className="row"
-        style={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-
-        <div
-          style={{
-            fontSize: '1.3rem',
-            fontWeight: 900,
-          }}
-        >
-          📊 Scores
+    <Card className="arcade-scoreboard">
+      <div className="scoreboard-toolbar">
+        <div className="scoreboard-title">
+          <span>▥</span> LEADERBOARD
         </div>
 
-        <div className="row">
-
+        <div className="scoreboard-modes">
           <Button
-            color={
-              scoringMode === 'GUESSER'
-                ? 'blue'
-                : 'white'
-            }
-            onClick={() =>
-              onChangeMode('GUESSER')
-            }
+            color={scoringMode === 'GUESSER' ? 'yellow' : 'white'}
+            onClick={() => onChangeMode('GUESSER')}
           >
-            🔍 guesser
+            Guesser
           </Button>
 
           <Button
-            color={
-              scoringMode === 'OWNER'
-                ? 'purple'
-                : 'white'
-            }
-            onClick={() =>
-              onChangeMode('OWNER')
-            }
+            color={scoringMode === 'OWNER' ? 'yellow' : 'white'}
+            onClick={() => onChangeMode('OWNER')}
           >
-            🎵 owner
+            Owner
           </Button>
-
         </div>
-
       </div>
 
-      {/* EMPTY */}
-
-      {sortedScores.length === 0 && (
-
-        <div className="helper-text">
-          No scores yet
-        </div>
-      )}
-
-      {/* SCORE TABLE */}
-
-      {sortedScores.length > 0 && (
-
-        <div
-          style={{
-            overflowX: 'auto',
-            marginTop: 8,
-          }}
-        >
-
-          <table
-            style={{
-              width: '100%',
-              borderCollapse: 'separate',
-              borderSpacing: '14px',
-            }}
-          >
-
-            {/* USERNAMES */}
-
+      {sortedScores.length === 0 ? (
+        <div className="scoreboard-empty">No scores yet</div>
+      ) : (
+        <div className="scoreboard-table-wrap">
+          <table className="arcade-score-table">
             <thead>
-
               <tr>
-
-                {sortedScores.map((entry) => (
-
-                  <th
-                    key={entry.userId}
-                    style={{
-                      textAlign: 'center',
-                      fontSize: '1rem',
-                      fontWeight: 900,
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-
-                    {entry.username}
-
-                  </th>
-                ))}
-
+                <th>#</th>
+                <th>PLAYER</th>
+                <th>POINTS</th>
               </tr>
-
             </thead>
 
-            {/* SCORES */}
-
             <tbody>
-
-              <tr>
-
-                {sortedScores.map((entry, i) => (
-
-                  <td
-                    key={entry.userId}
-                    style={{
-                      textAlign: 'center',
-                    }}
-                  >
-
-                    <div
-                      style={{
-
-                        display: 'inline-flex',
-
-                        alignItems: 'center',
-
-                        justifyContent: 'center',
-
-                        gap: 8,
-
-                        minWidth: '100px',
-
-                        padding: '12px 18px',
-
-                        borderRadius: 16,
-
-                        background:
-                          i === 0
-                            ? '#fff3cd'
-                            : 'white',
-
-                        border:
-                          i === 0
-                            ? '2px solid #f7d774'
-                            : '2px solid #ddd',
-
-                        fontWeight: 900,
-
-                        boxShadow:
-                          '0 2px 6px rgba(0,0,0,0.08)',
-                      }}
-                    >
-
-                      <span>
-                        {
-                          i === 0
-                            ? '🥇'
-                            : i === 1
-                            ? '🥈'
-                            : i === 2
-                            ? '🥉'
-                            : '#'
-                        }
-                      </span>
-
-                      <span>
-                        {entry.score} pts
-                      </span>
-
-                    </div>
-
+              {sortedScores.map((entry, index) => (
+                <tr
+                  key={entry.userId}
+                  className={index === 0 ? 'score-leader' : ''}
+                >
+                  <td className="score-rank">
+                    {index + 1}
                   </td>
-                ))}
 
-              </tr>
+                  <td className="score-player">
+                    {entry.username}
+                    {index === 0 && (
+                      <span className="score-crown">♛</span>
+                    )}
+                  </td>
 
+                  <td className="score-points">
+                    {entry.score}
+                  </td>
+                </tr>
+              ))}
             </tbody>
-
           </table>
-
         </div>
       )}
-
     </Card>
   )
 }
