@@ -13,7 +13,7 @@ public class RedisTest{
 
         return args -> {
 
-            redisService.setValue("hello", "world");
+            //redisService.setValue("hello", "world");
 
             System.out.println(
                     redisService.getValue("hello")
