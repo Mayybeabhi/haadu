@@ -14,6 +14,7 @@ import {
 import { createRoomSocket } from '../realtime/socket'
 
 import GameHeader from '../components/game/GameHeader'
+import { getPlayerIcons } from '../utils/playerIcon'
 import ScorePanel from '../components/game/ScorePanel'
 import YoutubePlayer from '../components/game/YoutubePlayer'
 import GuessGrid from '../components/game/GuessGrid'
@@ -28,6 +29,7 @@ export default function GamePage() {
   const { user, isAdmin, scoringMode: initialMode } = getGameState()
 
   const [players, setPlayers] = useState([])
+  const adminUserId = players.find((player) => player.isAdmin)?.userId
   const [roundHistory, setRoundHistory] = useState([])
   const [phase, setPhase] = useState('waiting')
   const [scoringMode, setScoringMode] = useState(initialMode || 'GUESSER')
@@ -43,6 +45,7 @@ export default function GamePage() {
   const [loading, setLoading] = useState(false)
 
   const socketRef = useRef(null)
+  const playerIcons = getPlayerIcons(players)
 
   const loadScores = async (mode = scoringMode) => {
     try {
@@ -364,9 +367,21 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
                     key={player.userId}
                     className={`player-tile ${isYou ? 'player-you' : ''}`}
                   >
-                    <div className={`player-avatar avatar-${index % 5}`}>
-                      {player.username?.charAt(0)?.toUpperCase()}
-                    </div>
+                    <div className="player-avatar">
+  {player.isAdmin ? (
+    <img
+      src="/images/player-icons/Retro Neon Crown Sticker.png"
+      alt="Admin crown"
+      className="player-musical-icon"
+    />
+  ) : (
+    <img
+      src={playerIcons[player.username]}
+      alt={`${player.username} avatar`}
+      className="player-musical-icon"
+    />
+  )}
+</div>
 
                     <div className="player-info">
                       <strong>
@@ -400,7 +415,7 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
               <div className="game-stage waiting-stage">
                 <div className="stage-vinyl">
                   <div className="stage-vinyl-label">
-                    ♫
+                    
                     <small>HAADU</small>
                   </div>
                 </div>
@@ -432,7 +447,7 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
                 <div className="game-stage playing-stage">
                   <div className="stage-vinyl">
                     <div className="stage-vinyl-label">
-                      ♫
+                      
                       <small>HAADU</small>
                     </div>
                   </div>
@@ -517,10 +532,12 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
               </div>
 
               <ScorePanel
-                scores={scores}
-                scoringMode={scoringMode}
-                onChangeMode={handleScoringModeChange}
-              />
+  scores={scores}
+  players={players}
+  adminUserId={adminUserId}
+  scoringMode={scoringMode}
+  onChangeMode={handleScoringModeChange}
+/>
             </section>
 
             <section className="game-panel progress-panel">
@@ -570,11 +587,11 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
       </main>
 
       <footer className="game-footer">
-        <span>♫ &nbsp; BRING YOUR SONGS</span>
-        <span>• &nbsp; GUESS THE SUBMITTER</span>
-        <span>• &nbsp; SCORE POINTS</span>
-        <span>• &nbsp; CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>&nbsp; BRING YOUR SONGS</span>
+        <span>&nbsp; GUESS THE SUBMITTER</span>
+        <span>&nbsp; SCORE POINTS</span>
+        <span>&nbsp; CROWN THE MUSIC EXPERT</span>
+        
       </footer>
     </div>
   )

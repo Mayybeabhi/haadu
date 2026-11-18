@@ -1,12 +1,16 @@
-
 import Card from '../ui/Card'
 import Button from '../ui/Button'
+import { getPlayerIcons } from '../../utils/playerIcon'
 
 export default function ScorePanel({
   scores = [],
+  players = [],
+  adminUserId,
   scoringMode,
   onChangeMode,
 }) {
+  const playerIcons = getPlayerIcons(players)
+
   const sortedScores = [...scores].sort(
     (a, b) => b.score - a.score
   )
@@ -36,7 +40,9 @@ export default function ScorePanel({
       </div>
 
       {sortedScores.length === 0 ? (
-        <div className="scoreboard-empty">No scores yet</div>
+        <div className="scoreboard-empty">
+          No scores yet
+        </div>
       ) : (
         <div className="scoreboard-table-wrap">
           <table className="arcade-score-table">
@@ -49,27 +55,45 @@ export default function ScorePanel({
             </thead>
 
             <tbody>
-              {sortedScores.map((entry, index) => (
-                <tr
-                  key={entry.userId}
-                  className={index === 0 ? 'score-leader' : ''}
-                >
-                  <td className="score-rank">
-                    {index + 1}
-                  </td>
+              {sortedScores.map((entry, index) => {
+                const isAdmin =
+                  String(entry.userId) === String(adminUserId)
 
-                  <td className="score-player">
-                    {entry.username}
-                    {index === 0 && (
-                      <span className="score-crown">♛</span>
-                    )}
-                  </td>
+                return (
+                  <tr
+                    key={entry.userId}
+                    className={index === 0 ? 'score-leader' : ''}
+                  >
+                    <td className="score-rank">
+                      {index + 1}
+                    </td>
 
-                  <td className="score-points">
-                    {entry.score}
-                  </td>
-                </tr>
-              ))}
+                    <td className="score-player">
+                      <div className="leaderboard-player">
+                        <img
+                          src={
+                            isAdmin
+                              ? '/images/player-icons/Retro Neon Crown Sticker.png'
+                              : playerIcons[entry.username]
+                          }
+                          alt={
+                            isAdmin
+                              ? 'Admin crown'
+                              : `${entry.username} avatar`
+                          }
+                          className="leaderboard-player-icon"
+                        />
+
+                        <span>{entry.username}</span>
+                      </div>
+                    </td>
+
+                    <td className="score-points">
+                      {entry.score}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

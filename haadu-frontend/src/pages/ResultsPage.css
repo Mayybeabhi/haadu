@@ -1,0 +1,1046 @@
+
+/* =========================================
+   HAADU - RESULTS / WINNER PAGE
+========================================= */
+
+.results-page {
+  --yellow: #ffd600;
+  --pink: #ff168a;
+  --green: #27ff86;
+  --cream: #f2dfc4;
+  --black: #090909;
+
+  min-height: 100vh;
+  background: var(--black);
+  color: var(--cream);
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  position: relative;
+  padding: 0 3%;
+  overflow-x: hidden;
+}
+
+/* CRT SCANLINES */
+.results-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.12;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.8) 4px,
+    rgba(0, 0, 0, 0.8) 5px
+  );
+
+  background-size: 100% 5px;
+  animation: results-crt-scan 8s linear infinite;
+}
+
+@keyframes results-crt-scan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 100px;
+  }
+}
+
+/* HEADER */
+.results-header {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(242, 223, 196, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.results-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    transparent 40%
+  );
+}
+
+.results-logo {
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 32px;
+  letter-spacing: -1px;
+  color: var(--yellow);
+  text-decoration: none;
+  text-shadow: 2px 2px #6d4700;
+}
+
+.results-logo span {
+  color: var(--pink);
+}
+
+.results-header-divider {
+  height: 32px;
+  width: 1px;
+  background: rgba(242, 223, 196, 0.3);
+  margin: 0 24px;
+}
+
+.results-header-label {
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+
+.results-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.results-nav a {
+  color: var(--cream);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 1px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.results-menu {
+  display: flex;
+  gap: 5px;
+}
+
+.results-menu span {
+  width: 17px;
+  height: 17px;
+  background: var(--pink);
+}
+
+/* MAIN */
+.results-main {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 45px 0 100px;
+}
+
+/* HEADING */
+.results-heading {
+  margin-bottom: 30px;
+}
+
+.results-file-tag {
+  display: inline-block;
+  background: var(--cream);
+  color: var(--black);
+  padding: 7px 18px;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 14px;
+  transform: rotate(-3deg);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.results-title-row {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.results-title-row h1 {
+  margin: 0;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(42px, 6vw, 76px);
+  line-height: 0.95;
+  font-style: italic;
+  letter-spacing: -2px;
+  color: var(--cream);
+  text-shadow: 3px 3px 0 #000;
+}
+
+.results-title-row h1 span {
+  color: var(--pink);
+}
+
+.results-heading-description {
+  border-left: 2px solid var(--pink);
+  padding: 8px 0 8px 25px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+/* GRID */
+.results-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(450px, 1.5fr);
+  gap: 20px;
+}
+
+/* PANEL BASE */
+.results-winners-panel,
+.results-score-panel,
+.results-history-panel {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 22, 138, 0.045),
+      transparent 35%
+    ),
+    rgba(15, 15, 15, 0.95);
+  border: 1px solid var(--pink);
+  border-radius: 18px;
+  box-shadow: 0 0 12px rgba(255, 22, 138, 0.08);
+  padding: 22px;
+  min-width: 0;
+}
+
+.results-section-label {
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 23px;
+  font-style: italic;
+  color: var(--cream);
+  text-shadow: 2px 2px #000;
+  letter-spacing: 0.5px;
+}
+
+.green-label {
+  display: inline-block;
+  padding: 9px 18px;
+  background: var(--green);
+  color: var(--black);
+  transform: rotate(-2deg);
+  font-style: normal;
+}
+
+/* WINNERS */
+.results-winners-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.results-winners-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.results-winner-card {
+  display: grid;
+  grid-template-columns: 36px 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  background: rgba(255, 214, 0, 0.08);
+  border: 2px solid var(--yellow);
+  box-shadow: 4px 4px 0 rgba(255, 214, 0, 0.2);
+}
+
+.results-winner-rank {
+  color: var(--yellow);
+  font-size: 25px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.results-player-icon {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: transparent;
+}
+
+.results-winner-name {
+  font-size: 18px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.results-winner-score {
+  color: var(--yellow);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 28px;
+  white-space: nowrap;
+}
+
+.results-winner-score span {
+  display: block;
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+.results-champion-footer {
+  margin-top: auto;
+  padding-top: 22px;
+  color: var(--green);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.results-champion-footer span {
+  margin-right: 10px;
+  color: var(--pink);
+}
+
+/* SCOREBOARD */
+.results-score-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.results-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.results-mode-switch {
+  display: flex;
+  padding: 5px;
+  background: #151515;
+  border: 1px solid #555;
+  border-radius: 30px;
+  gap: 4px;
+}
+
+.results-mode-switch button {
+  border: 1px solid #111;
+  padding: 9px 16px;
+  border-radius: 25px;
+  background: var(--cream);
+  color: var(--black);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.results-mode-switch button.active {
+  background: var(--yellow);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.results-mode-switch button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.results-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.results-leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 380px;
+}
+
+.results-leaderboard th {
+  padding: 12px 10px;
+  color: rgba(242, 223, 196, 0.7);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-align: left;
+  border-bottom: 1px solid rgba(242, 223, 196, 0.25);
+}
+
+.results-leaderboard th:last-child,
+.results-leaderboard td:last-child {
+  text-align: right;
+}
+
+.results-leaderboard td {
+  padding: 14px 10px;
+  border-bottom: 1px solid rgba(242, 223, 196, 0.1);
+  font-size: 14px;
+}
+
+.results-top-player {
+  background: rgba(255, 22, 138, 0.1);
+}
+
+.results-top-player td {
+  color: var(--yellow);
+}
+
+.results-rank {
+  color: var(--pink);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  width: 45px;
+}
+
+.results-player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  min-width: 0;
+}
+
+.results-player-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.results-winner-mark {
+  color: var(--yellow);
+  margin-left: 5px;
+}
+
+.results-points {
+  color: var(--yellow);
+  font-weight: 900;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+}
+
+.results-score-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  margin-top: 10px;
+  border-top: 1px dashed rgba(242, 223, 196, 0.2);
+  color: rgba(242, 223, 196, 0.55);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+/* ROUND HISTORY */
+.results-history-panel {
+  grid-column: 1 / -1;
+  overflow: hidden;
+}
+
+.results-history-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.results-history-subtitle {
+  color: var(--pink);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.results-history-content {
+  min-width: 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* RoundHistoryTable stays functional and scrollable */
+.results-history-content > * {
+  min-width: 0;
+}
+
+/* STATES */
+.results-empty {
+  text-align: center;
+  padding: 35px 15px;
+  color: rgba(242, 223, 196, 0.5);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 2px;
+}
+
+.results-error {
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  background: rgba(255, 59, 79, 0.12);
+  border: 1px solid #ff3b4f;
+  color: #ff3b4f;
+  font-weight: 900;
+}
+
+/* ACTIONS */
+.results-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.results-end-message {
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 2px;
+  color: var(--cream);
+  font-size: 14px;
+}
+
+.results-end-message span {
+  color: var(--pink);
+  margin-right: 10px;
+}
+
+/* FOOTER */
+.results-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  min-height: 38px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
+  background: var(--pink);
+  color: var(--black);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 8px 15px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.15) 4px,
+    rgba(0, 0, 0, 0.15) 5px
+  );
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-history-panel {
+    grid-column: auto;
+  }
+
+  .results-main {
+    padding-top: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .results-page {
+    padding: 0 15px;
+  }
+
+  .results-header {
+    height: 60px;
+  }
+
+  .results-header-divider {
+    margin: 0 12px;
+  }
+
+  .results-header-label {
+    font-size: 11px;
+  }
+
+  .results-nav {
+    gap: 12px;
+  }
+
+  .results-nav a {
+    font-size: 10px;
+  }
+
+  .results-menu span {
+    width: 12px;
+    height: 12px;
+  }
+
+  .results-title-row {
+    gap: 20px;
+  }
+
+  .results-title-row h1 {
+    font-size: 42px;
+  }
+
+  .results-heading-description {
+    font-size: 13px;
+    padding-left: 15px;
+  }
+
+  .results-winners-panel,
+  .results-score-panel,
+  .results-history-panel {
+    padding: 16px;
+  }
+
+  .results-winner-card {
+    grid-template-columns: 25px 35px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .results-player-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .results-winner-name {
+    font-size: 15px;
+  }
+
+  .results-winner-score {
+    font-size: 22px;
+  }
+
+  .results-panel-header {
+    align-items: flex-start;
+  }
+
+  .results-section-label {
+    font-size: 19px;
+  }
+
+  .results-footer {
+    font-size: 8px;
+    padding: 8px 5px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.champions-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  min-width: 280px;
+  padding: 14px 24px;
+  background: #27ff86;
+  color: #080808;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  transform: rotate(-1deg);
+  box-shadow: 5px 5px 0 #064d2b;
+  margin-bottom: 24px;
+}
+
+.champions-crown {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* =========================================
+   RESULTS PAGE - ROUND HISTORY
+   Match GamePage round history styling
+========================================= */
+
+.results-page .round-history-content {
+  gap: 12px;
+}
+
+.results-page .round-history-export {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.results-page .round-export-btn {
+  padding: 9px 16px;
+  background: var(--yellow, #ffd600);
+  color: #080808;
+  border: 1px solid #080808;
+  border-radius: 0;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #806b00;
+}
+
+.results-page .round-history-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 380px;
+  scrollbar-width: thin;
+  scrollbar-color: #ff168a #111;
+}
+
+.results-page .round-history-table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+  color: var(--cream, #f2dfc4);
+}
+
+.results-page .round-history-table th {
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(242, 223, 196, 0.2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.results-page .round-history-table td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid rgba(242, 223, 196, 0.12);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.results-page .round-number-cell {
+  color: var(--yellow, #ffd600);
+}
+
+/* Song thumbnail */
+.results-page .round-song-thumbnail {
+  display: block;
+  width: 88px;
+  height: 50px;
+  object-fit: cover;
+  border: 1px solid rgba(242, 223, 196, 0.4);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.results-page .round-song-link:hover .round-song-thumbnail {
+  transform: scale(1.06);
+  border-color: var(--pink, #ff168a);
+}
+
+.results-page .round-song-fallback {
+  color: var(--pink, #ff168a);
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+}
+
+/* Owner - yellow */
+.results-page .round-owner-badge {
+  display: inline-block;
+  padding: 7px 12px;
+  background: var(--yellow, #ffd600);
+  color: #080808;
+  border: 1px solid #080808;
+  box-shadow: 3px 3px 0 rgba(255, 214, 0, 0.25);
+  font-weight: 900;
+}
+
+/* Correct - green */
+.results-page .round-guess-correct {
+  display: inline-block;
+  padding: 7px 11px;
+  background: var(--green, #27ff86);
+  color: #050505;
+  border: 1px solid var(--green, #27ff86);
+  font-weight: 900;
+}
+
+/* Wrong - red */
+.results-page .round-guess-wrong {
+  display: inline-block;
+  padding: 7px 11px;
+  background: #ff3b4f;
+  color: #080808;
+  border: 1px solid #ff3b4f;
+  font-weight: 900;
+}
+
+.results-page .round-empty-cell {
+  color: #777;
+}
+
+/* Pink scrollbar */
+.results-page .round-history-table-wrap::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-thumb {
+  background: #ff168a;
+  border-radius: 0;
+  border: 2px solid #111;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #ff4ba8;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-button {
+  background: #111;
+  height: 12px;
+  width: 12px;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background: #111 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff168a' d='M6 2L1 9h10z'/%3E%3C/svg%3E") center no-repeat;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-button:single-button:vertical:increment {
+  background: #111 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff168a' d='M6 10L1 3h10z'/%3E%3C/svg%3E") center no-repeat;
+}
+
+
+/* =========================================
+   RESULTS PAGE — FULL WIDTH LAYOUT FIX
+========================================= */
+
+/* Use the available screen width */
+.results-page {
+  padding: 0 2%;
+  padding-bottom: 48px;
+}
+
+.results-main {
+  max-width: none;
+  width: 100%;
+  padding: 28px 0 30px;
+}
+
+/* Compact heading */
+.results-heading {
+  margin-bottom: 22px;
+}
+
+.results-title-row {
+  margin-top: 10px;
+}
+
+/* Winners + Leaderboard */
+.results-grid {
+  width: 100%;
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.5fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* Consistent panel sizing */
+.results-winners-panel,
+.results-score-panel,
+.results-history-panel {
+  padding: 18px;
+  border-radius: 4px;
+}
+
+/* Keep both top panels visually balanced */
+.results-winners-panel,
+.results-score-panel {
+  min-height: 300px;
+}
+
+/* More compact winner cards */
+.results-winners-content {
+  margin-top: 16px;
+  gap: 10px;
+}
+
+.results-winner-card {
+  padding: 12px 14px;
+}
+
+/* Compact scoreboard */
+.results-panel-header {
+  margin-bottom: 12px;
+}
+
+.results-leaderboard th {
+  padding: 9px 10px;
+}
+
+.results-leaderboard td {
+  padding: 10px;
+}
+
+/* Round history occupies the full row */
+.results-history-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.results-history-heading {
+  margin-bottom: 12px;
+}
+
+.results-history-content {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Keep history scrolling inside its own table */
+.results-page .round-history-table-wrap {
+  max-height: 260px;
+  overflow: auto;
+}
+
+/* Slightly tighter history rows */
+.results-page .round-history-table th {
+  padding: 9px 10px;
+}
+
+.results-page .round-history-table td {
+  padding: 9px 8px;
+}
+
+/* Footer should not cover page content */
+.results-footer {
+  min-height: 34px;
+  padding: 6px 15px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-history-panel {
+    grid-column: auto;
+  }
+
+  .results-winners-panel,
+  .results-score-panel {
+    min-height: auto;
+  }
+
+  .results-main {
+    padding-top: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .results-page {
+    padding: 0 12px 45px;
+  }
+
+  .results-grid {
+    gap: 14px;
+  }
+
+  .results-winners-panel,
+  .results-score-panel,
+  .results-history-panel {
+    padding: 14px;
+  }
+
+  .results-page .round-history-table-wrap {
+    max-height: 240px;
+  }
+}
+
+.results-actions button {
+  color: #000 !important;
+  font-weight: 900 !important;
+  -webkit-text-stroke: 0.4px #000;
+}
+
+/* =========================================
+   RESULTS — INDEPENDENT TABLE SCROLL
+========================================= */
+
+.results-history-panel {
+  min-width: 0;
+  min-height: 0;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.results-history-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.results-page .round-history-content {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+}
+
+.results-page .round-history-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  max-height: 220px;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ff168a #171217;
+}
+
+/* Allow columns to expand without stretching the page */
+.results-page .round-history-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+/* Keep headings visible while scrolling vertically */
+.results-page .round-history-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #171016;
+}
+
+/* Pink CRT-style scrollbars */
+.results-page .round-history-table-wrap::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-track {
+  background: #171217;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-thumb {
+  background: #ff168a;
+  border: 1px solid #090909;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #ffd600;
+}
+
+.results-page .round-history-table-wrap::-webkit-scrollbar-corner {
+  background: #090909;
+}
+
+.results-page .results-history-panel {
+  position: relative;
+}
+
+.results-page .round-history-export {
+  position: absolute;
+  top: 12px;
+  right: 22px;
+  z-index: 5;
+  margin: 0;
+}
+
+.results-page .results-history-heading {
+  padding-right: 150px;
+}

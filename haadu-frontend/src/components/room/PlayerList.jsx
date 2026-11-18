@@ -1,9 +1,12 @@
 import Card from '../ui/Card'
+import { getPlayerIcons } from '../../utils/playerIcon'
 
 export default function PlayerList({ players = [], currentUserId }) {
+  const playerIcons = getPlayerIcons(players)
+
   return (
     <Card>
-      <div className="section-title">👥 players</div>
+      <div className="section-title">players</div>
 
       <div className="stack" style={{ marginTop: 16 }}>
         {players.map((player) => {
@@ -18,7 +21,9 @@ export default function PlayerList({ players = [], currentUserId }) {
                 alignItems: 'center',
                 padding: '12px 14px',
                 borderRadius: 12,
-                background: isYou ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
+                background: isYou
+                  ? 'rgba(255,255,255,0.08)'
+                  : 'rgba(255,255,255,0.04)',
               }}
             >
               <div>
@@ -31,8 +36,20 @@ export default function PlayerList({ players = [], currentUserId }) {
                 </div>
               </div>
 
-              <div style={{ fontSize: '1.2rem' }}>
-                {player.isAdmin ? '👑' : '🎧'}
+              <div className="player-avatar">
+                {player.isAdmin ? (
+                  <img
+                    src="/images/player-icons/Retro Neon Crown Sticker.png"
+                    alt="Admin crown"
+                    className="player-musical-icon"
+                  />
+                ) : (
+                  <img
+                    src={playerIcons[player.username]}
+                    alt={`${player.username} avatar`}
+                    className="player-musical-icon"
+                  />
+                )}
               </div>
             </div>
           )

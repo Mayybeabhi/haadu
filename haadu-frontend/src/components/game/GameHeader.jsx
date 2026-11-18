@@ -6,7 +6,7 @@ export default function GameHeader({ roomCode, roundNumber, phase }) {
         <a href="/" className="arcade-logo">HAADU<span>.</span></a>
         <div className="arcade-brand-divider" />
         <div className="arcade-context">
-          <span>♫</span> THE GAME FLOOR
+           THE GAME FLOOR
         </div>
       </div>
 

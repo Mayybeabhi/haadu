@@ -331,3 +331,25 @@ input {
   background: #ff168a;
   color: #090909;
 }
+
+.player-avatar {
+  width: 64px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.player-musical-icon {
+  width: 52px;
+  height: 40px;
+  object-fit: contain;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}

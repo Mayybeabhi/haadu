@@ -133,11 +133,11 @@ export default function GuestNamePage() {
       </section>
 
       <div className="guest-bottom-line">
-        <span>♫ BRING YOUR SONGS</span>
-        <span>■ GUESS THE SUBMITTER</span>
-        <span>■ SCORE POINTS</span>
-        <span>■ CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>CROWN THE MUSIC EXPERT</span>
+        
       </div>
     </main>
   )

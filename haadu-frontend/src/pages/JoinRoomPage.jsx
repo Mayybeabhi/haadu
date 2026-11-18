@@ -71,7 +71,7 @@ export default function JoinRoomPage() {
           </p>
 
           <div className="join-room-note">
-            <span>♫</span>
+            
             THE MUSIC IS BETTER TOGETHER.
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function JoinRoomPage() {
           <Card className="join-room-card">
             <div className="join-room-card-header">
               <span>02 / PLAYER ACCESS</span>
-              <span className="join-room-music-icon">♫</span>
+              
             </div>
 
             <h2>JOIN THE ROOM</h2>
@@ -132,18 +132,18 @@ export default function JoinRoomPage() {
 
             <div className="join-room-card-footer">
               <span>PLAYER ACCESS</span>
-              <span>LET'S PLAY ♫</span>
+              
             </div>
           </Card>
         </div>
       </section>
 
       <footer className="join-room-bottom-strip">
-        <span>♫ BRING YOUR SONGS</span>
-        <span>■ GUESS THE SUBMITTER</span>
-        <span>■ SCORE POINTS</span>
-        <span>■ CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>CROWN THE MUSIC EXPERT</span>
+        
       </footer>
     </main>
   )

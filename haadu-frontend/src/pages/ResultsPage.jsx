@@ -1,13 +1,12 @@
+
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getRoomPlayers } from '../api/roomApi'
-import { getScores } from '../api/scoreApi'
+import { getScores, getRoundHistory } from '../api/scoreApi'
 import Button from '../components/ui/Button'
-import Card from '../components/ui/Card'
-
 import RoundHistoryTable from '../components/game/RoundHistoryTable'
-
-import { getRoundHistory } from '../api/scoreApi'
+import { getPlayerIcons } from '../utils/playerIcon'
+import './ResultsPage.css'
 
 export default function ResultsPage() {
   const { roomCode } = useParams()
@@ -20,26 +19,21 @@ export default function ResultsPage() {
   const [error, setError] = useState('')
   const [roundHistory, setRoundHistory] = useState([])
 
+  const playerIcons = getPlayerIcons(players)
+  const adminUserId = players.find((player => player.isAdmin))?.userId
+
   useEffect(() => {
-
-  async function load() {
-
-    try {
-
-      const data =
-        await getRoundHistory(roomCode)
-
-      setRoundHistory(data)
-
-    } catch (e) {
-
-      console.error(e)
+    async function loadHistory() {
+      try {
+        const data = await getRoundHistory(roomCode)
+        setRoundHistory(data || [])
+      } catch (e) {
+        console.error(e)
+      }
     }
-  }
 
-  load()
-
-}, [roomCode])
+    if (roomCode) loadHistory()
+  }, [roomCode])
 
   const load = async (selectedMode = mode) => {
     try {
@@ -65,131 +59,276 @@ export default function ResultsPage() {
     load()
   }, [roomCode])
 
-  // 🔥 Compute leaderboard safely
   const sorted = useMemo(() => {
-    if (!players.length || !scores) return []
-
-    return [...scores]
-  .sort((a, b) => b.score - a.score)
-  }, [scores, players])
+    return [...scores].sort((a, b) => b.score - a.score)
+  }, [scores])
 
   const topScore = sorted[0]?.score ?? 0
-
   const winners = sorted.filter((x) => x.score === topScore)
 
+  const handleModeChange = (selectedMode) => {
+    setMode(selectedMode)
+    load(selectedMode)
+  }
+
   return (
-    <div className="page-shell center">
-      <div className="big-center-card stack animate-in" style={{ maxWidth: '1400px' }}>
-        <div className="page-title">winner time 🏆</div>
-        <div className="page-subtitle">
-          final standings based on selected scoring mode
+    <div className="results-page">
+      <div className="results-scanlines" />
+
+      {/* HEADER */}
+      <header className="results-header">
+        <a href="/" className="results-logo">
+          HAADU<span>.</span>
+        </a>
+
+        <div className="results-header-divider" />
+
+        <div className="results-header-label">
+          THE GAME FLOOR
         </div>
 
-        {/* 🔴 Error */}
-        {error && <div className="error-text">{error}</div>}
-
-        {/* 🟡 Loading */}
-        {loading && <div className="helper-text">loading results...</div>}
-
-        <Card className="stack center">
-          {/* 🔁 Mode Toggle */}
-          <div className="row">
-            <Button
-              color={mode === 'GUESSER' ? 'blue' : 'white'}
-              disabled={loading}
-              onClick={() => {
-                setMode('GUESSER')
-                load('GUESSER')
-              }}
-            >
-              🔍 guesser mode
-            </Button>
-
-            <Button
-              color={mode === 'OWNER' ? 'purple' : 'white'}
-              disabled={loading}
-              onClick={() => {
-                setMode('OWNER')
-                load('OWNER')
-              }}
-            >
-              🎵 owner mode
-            </Button>
+        <nav className="results-nav">
+          <a href="/how-to-play">HOW TO PLAY</a>
+          <a href="/about">ABOUT</a>
+          <div className="results-menu">
+            <span />
+            <span />
+            <span />
           </div>
+        </nav>
+      </header>
 
-          {/* 👑 Winners */}
-          <div className="section-title" style={{ textAlign: 'center' }}>
-            👑 Winner{winners.length > 1 ? 's' : ''}
+      <main className="results-main">
+        {/* TITLE */}
+        <section className="results-heading">
+          <div className="results-file-tag">FILE 06</div>
+
+          <div className="results-title-row">
+            <h1>
+              WINNER <span>TIME.</span>
+            </h1>
+
+            <div className="results-heading-description">
+              Final standings based on selected scoring mode.
+              <br />
+              The music never stops.
+            </div>
           </div>
+        </section>
 
-          <div className="stack" style={{ width: '100%' }}>
-            {winners.length === 0 && !loading && (
-              <div className="helper-text">No winners yet</div>
-            )}
-
-            {winners.map((winner) => (
-              <div
-                key={winner.userId}
-                style={{
-                  background: '#fff7c2',
-                  border: '3px solid var(--ink)',
-                  borderRadius: 16,
-                  padding: '16px 22px',
-                  fontSize: '1.6rem',
-                  fontWeight: 900,
-                  textAlign: 'center',
-                  boxShadow: '5px 5px 0 var(--ink)',
-                }}
-              >
-                {winner.username} — {winner.score} pts
-              </div>
-            ))}
+        {error && (
+          <div className="results-error">
+            ⚠ {error}
           </div>
+        )}
 
-          {/* 📊 Leaderboard */}
-          <div className="stack" style={{ width: '100%' }}>
-            {sorted.length === 0 && !loading && (
-              <div className="helper-text">No scores yet</div>
-            )}
+        {/* MAIN RESULTS GRID */}
+        <div className="results-grid">
 
-            {sorted.map((entry, i) => {
-              const isWinner = entry.score === topScore
+          {/* WINNERS */}
+          <section className="results-winners-panel">
+            <div className="champions-title">
+  <span className="champions-crown">♛</span>
+  {winners.length === 1 ? 'CHAMPION' : 'CHAMPIONS'}
+</div>
 
-              return (
-                <div
-                  key={entry.userId}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '12px 16px',
-                    border: '2px solid #eee',
-                    borderRadius: 12,
-                    background: isWinner ? '#fff7c2' : 'white',
-                  }}
-                >
-                  <div style={{ fontWeight: 800 }}>
-                    {i + 1}. {entry.username}
-                  </div>
-                  <div style={{ fontWeight: 900 }}>
-                    {entry.score} pts
-                  </div>
+            <div className="results-winners-content">
+              {loading ? (
+                <div className="results-empty">
+                  LOADING RESULTS...
                 </div>
-              )
-            })}
+              ) : winners.length === 0 ? (
+                <div className="results-empty">
+                  NO WINNERS YET
+                </div>
+              ) : (
+                winners.map((winner, index) => {
+                  const isAdmin =
+                    String(winner.userId) === String(adminUserId)
+
+                  return (
+                    <div
+                      key={winner.userId}
+                      className="results-winner-card"
+                    >
+                      <div className="results-winner-rank">
+                         ♛ 
+                      </div>
+
+                      <img
+                        src={
+                          isAdmin
+                            ? '/images/player-icons/Retro Neon Crown Sticker.png'
+                            : playerIcons[winner.username]
+                        }
+                        alt={`${winner.username} avatar`}
+                        className="results-player-icon"
+                      />
+
+                      <div className="results-winner-name">
+                        {winner.username}
+                      </div>
+
+                      <div className="results-winner-score">
+                        {winner.score}
+                        <span>PTS</span>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+
+            <div className="results-champion-footer">
+              
+              {winners.length > 1
+                ? 'IT’S A TIE!'
+                : 'HIGH SCORE HOLDER'}
+            </div>
+          </section>
+
+          {/* SCOREBOARD */}
+          <section className="results-score-panel">
+            <div className="results-panel-header">
+              <div className="results-section-label">
+                ▥ FINAL LEADERBOARD
+              </div>
+
+              <div className="results-mode-switch">
+                <button
+                  className={mode === 'GUESSER' ? 'active' : ''}
+                  disabled={loading}
+                  onClick={() => handleModeChange('GUESSER')}
+                >
+                GUESSER
+                </button>
+
+                <button
+                  className={mode === 'OWNER' ? 'active' : ''}
+                  disabled={loading}
+                  onClick={() => handleModeChange('OWNER')}
+                >
+                OWNER
+                </button>
+              </div>
+            </div>
+
+            <div className="results-table-wrap">
+              <table className="results-leaderboard">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>PLAYER</th>
+                    <th>POINTS</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {sorted.map((entry, index) => {
+                    const isWinner = entry.score === topScore
+                    const isAdmin =
+                      String(entry.userId) === String(adminUserId)
+
+                    return (
+                      <tr
+                        key={entry.userId}
+                        className={isWinner ? 'results-top-player' : ''}
+                      >
+                        <td className="results-rank">
+                          {String(index + 1).padStart(2, '0')}
+                        </td>
+
+                        <td>
+                          <div className="results-player-cell">
+                            <img
+                              src={
+                                isAdmin
+                                  ? '/images/player-icons/Retro Neon Crown Sticker.png'
+                                  : playerIcons[entry.username]
+                              }
+                              alt=""
+                              className="results-player-icon"
+                            />
+
+                            <span>{entry.username}</span>
+
+                            {isWinner && (
+                              <span className="results-winner-mark">
+                                ♛
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="results-points">
+                          {entry.score}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+
+              {!loading && sorted.length === 0 && (
+                <div className="results-empty">
+                  NO SCORES RECORDED
+                </div>
+              )}
+            </div>
+
+            <div className="results-score-footer">
+              <span>FINAL SCORE</span>
+              <span>
+                {sorted.length} PLAYERS
+              </span>
+            </div>
+          </section>
+
+          {/* ROUND HISTORY */}
+          <section className="results-history-panel">
+            <div className="results-history-heading">
+              <div className="results-section-label">
+                ◴ ROUND HISTORY
+              </div>
+
+              <div className="results-history-subtitle">
+                GAME RECAP // {roundHistory.length} ROUNDS
+              </div>
+            </div>
+
+            <div className="results-history-content">
+              <RoundHistoryTable
+                rounds={roundHistory}
+                players={players}
+              />
+            </div>
+          </section>
+
+        </div>
+
+        {/* BOTTOM ACTION */}
+        <div className="results-actions">
+          <div className="results-end-message">
+            
           </div>
 
-          <RoundHistoryTable rounds={roundHistory} players={players}/> 
-
-          {/* 🔁 Play Again */}
           <Button
             color="green"
             disabled={loading}
             onClick={() => navigate('/rooms')}
           >
-            🔁 play again
+            ↻ PLAY AGAIN
           </Button>
-        </Card>
-      </div>
+        </div>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="results-footer">
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>GROW THE MUSIC EXPERT</span>
+      </footer>
     </div>
   )
 }

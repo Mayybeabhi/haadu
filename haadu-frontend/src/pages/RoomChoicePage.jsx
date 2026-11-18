@@ -27,7 +27,7 @@ export default function RoomChoicePage() {
 
         <nav>
           <span className="room-choice-user">
-            ♫ {user.username}
+             {user.username}
           </span>
           <span className="room-choice-equalizer">▮ ▮ ▮</span>
         </nav>
@@ -62,7 +62,7 @@ export default function RoomChoicePage() {
           >
             <div className="room-option-top">
               <span className="room-option-number">01 / HOST</span>
-              <span className="room-option-icon">♫</span>
+              
             </div>
 
             <div className="room-option-title">
@@ -89,7 +89,7 @@ export default function RoomChoicePage() {
           >
             <div className="room-option-top">
               <span className="room-option-number">02 / PLAYER</span>
-              <span className="room-option-icon">♫</span>
+              
             </div>
 
             <div className="room-option-title">
@@ -114,11 +114,11 @@ export default function RoomChoicePage() {
       </section>
 
       <footer className="room-choice-footer">
-        <span>♫ BRING YOUR SONGS</span>
-        <span>■ GUESS THE SUBMITTER</span>
-        <span>■ SCORE POINTS</span>
-        <span>■ CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>CROWN THE MUSIC EXPERT</span>
+        
       </footer>
     </main>
   )

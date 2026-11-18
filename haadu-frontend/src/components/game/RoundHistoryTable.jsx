@@ -97,7 +97,7 @@ export default function RoundHistoryTable({
                         />
                       ) : (
                         <span className="round-song-fallback">
-                          ♫ OPEN TRACK
+                           OPEN TRACK
                         </span>
                       )}
                     </a>

@@ -208,12 +208,12 @@ export default function LobbyPage() {
           <div className="lobby-column lobby-left-column">
             <div className="lobby-section-label">
               <span>01 / ARTIST LINEUP</span>
-              <span className="lobby-label-icon green">♟</span>
+            
             </div>
 
             <div className="lobby-panel lobby-player-panel">
               <div className="lobby-panel-heading">
-                <span className="green">♟</span>
+                
                 PLAYERS
               </div>
 
@@ -246,7 +246,7 @@ export default function LobbyPage() {
 
           <div className="lobby-column lobby-center-column">
             <div className="lobby-section-label">
-              <span className="green">♫</span>
+              
               <span>02 / TRACK RECORDING</span>
             </div>
 
@@ -340,11 +340,11 @@ export default function LobbyPage() {
       </section>
 
       <footer className="lobby-bottom-strip">
-        <span>♫ BRING YOUR SONGS</span>
-        <span>▪ GUESS THE SUBMITTER</span>
-        <span>▪ SCORE POINTS</span>
-        <span>▪ CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>CROWN THE MUSIC EXPERT</span>
+        
       </footer>
     </main>
   )

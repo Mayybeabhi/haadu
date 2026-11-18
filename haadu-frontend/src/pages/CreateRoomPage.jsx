@@ -83,7 +83,7 @@ export default function CreateRoomPage() {
           </p>
 
           <div className="create-room-note">
-            <span>♫</span>
+            
             YOU'RE THE HOST. MAKE IT COUNT.
           </div>
         </div>
@@ -92,7 +92,6 @@ export default function CreateRoomPage() {
           <Card className="create-room-card">
             <div className="create-room-card-header">
               <span>01 / GAME CONFIGURATION</span>
-              <span className="create-room-music-icon">♫</span>
             </div>
 
             <h2>CREATE YOUR GAME</h2>
@@ -159,18 +158,18 @@ export default function CreateRoomPage() {
 
             <div className="create-room-card-footer">
               <span>HOST CONTROLS</span>
-              <span>READY WHEN YOU ARE ♫</span>
+              <span>READY WHEN YOU ARE</span>
             </div>
           </Card>
         </div>
       </section>
 
       <footer className="create-room-bottom-strip">
-        <span>♫ BRING YOUR SONGS</span>
-        <span>■ GUESS THE SUBMITTER</span>
-        <span>■ SCORE POINTS</span>
-        <span>■ CROWN THE MUSIC EXPERT</span>
-        <span>♫</span>
+        <span>BRING YOUR SONGS</span>
+        <span>GUESS THE SUBMITTER</span>
+        <span>SCORE POINTS</span>
+        <span>CROWN THE MUSIC EXPERT</span>
+        
       </footer>
     </main>
   )
