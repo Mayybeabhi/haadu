@@ -2757,3 +2757,428 @@ body::-webkit-scrollbar-button:vertical:increment,
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff168a' d='M1 3h10L6 10z'/%3E%3C/svg%3E")
     center no-repeat;
 }
+
+
+/* =========================================
+   HAADU GAME FLOOR — MOBILE REDESIGN
+========================================= */
+
+@media (max-width: 720px) {
+
+  /* PAGE */
+  .page-shell.game-page {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  /* HEADER */
+  .game-page .arcade-header {
+    width: 92%;
+    height: 54px;
+    min-height: 54px;
+    gap: 8px;
+  }
+
+  .game-page .arcade-brand {
+    gap: 9px;
+    min-width: 0;
+  }
+
+  .game-page .arcade-logo {
+    font-size: 25px;
+  }
+
+  .game-page .arcade-brand-divider {
+    height: 22px;
+  }
+
+  .game-page .arcade-context {
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .game-page .arcade-nav {
+    gap: 9px;
+  }
+
+  .game-page .arcade-nav a {
+    display: none;
+  }
+
+  .game-page .arcade-menu {
+    gap: 4px;
+  }
+
+  .game-page .arcade-menu i {
+    width: 9px;
+    height: 13px;
+  }
+
+  /* CONTENT */
+  .game-page .game-content {
+    width: 92%;
+    padding: 18px 0 24px;
+    display: block;
+  }
+
+  /* INTRO */
+  .game-page .game-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .game-page .game-title-block {
+    padding-left: 5px;
+  }
+
+  .game-page .game-file-tag {
+    font-size: 15px;
+    padding: 4px 15px;
+  }
+
+  .game-page .game-title-block h1 {
+    font-size: clamp(48px, 13vw, 62px);
+    line-height: .85;
+    margin: 8px 0;
+  }
+
+  .game-page .game-title-underline {
+    width: 75%;
+    height: 5px;
+  }
+
+  .game-page .game-intro-copy {
+    grid-column: auto;
+    grid-row: auto;
+    padding-left: 13px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .game-page .game-sound-wave {
+    display: none;
+  }
+
+  /* ROOM INFORMATION */
+  .game-page .game-room-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .game-page .game-room-code,
+  .game-page .game-round-badge {
+    min-width: 0;
+    min-height: 58px;
+    padding: 8px 12px;
+    border-radius: 13px;
+  }
+
+  .game-page .game-room-code strong {
+    font-size: 25px;
+  }
+
+  .game-page .game-round-badge {
+    justify-content: center;
+    gap: 7px;
+    font-size: 12px;
+  }
+
+  /* MAIN GAME LAYOUT */
+  .game-page .game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .game-page .players-panel,
+  .game-page .game-main,
+  .game-page .game-sidebar {
+    width: 100%;
+    min-width: 0;
+    order: initial;
+  }
+
+  /* PLAYERS */
+  .game-page .players-panel {
+    min-height: 0;
+    height: auto;
+    padding: 13px;
+    overflow: visible;
+  }
+
+  .game-page .game-paper-heading {
+    font-size: 17px;
+    padding: 7px 14px;
+    margin-bottom: 13px;
+  }
+
+  .game-page .players-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .game-page .player-tile {
+    min-width: 0;
+    min-height: 64px;
+    padding: 7px;
+    gap: 7px;
+    border-radius: 12px;
+  }
+
+  .game-page .player-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+  }
+
+  .game-page .player-musical-icon {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+  }
+
+  .game-page .player-info {
+    min-width: 0;
+    gap: 3px;
+  }
+
+  .game-page .player-info strong {
+    font-size: 11px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .game-page .player-info span {
+    font-size: 10px;
+    gap: 5px;
+  }
+
+  .game-page .player-info span i {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+  }
+
+  .game-page .player-crown {
+    display: none;
+  }
+
+  /* SONG PLAYER */
+  .game-page .game-main {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .game-page .game-stage,
+  .game-page .playing-stage,
+  .game-page .waiting-stage,
+  .game-page .revealed-stage {
+    width: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .game-page .playing-stage {
+    padding: 14px 8px;
+    border-radius: 15px;
+  }
+
+  .game-page .stage-vinyl {
+    width: 90%;
+    opacity: .25;
+  }
+
+  .game-page .stage-arm {
+    display: none;
+  }
+
+  .game-page .stage-player {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .game-page .stage-player .youtube-card {
+    padding: 6px !important;
+  }
+
+  .game-page .stage-player iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* GUESSING AREA */
+  .game-page .game-guess-area {
+    padding: 30px 12px 14px;
+    border-radius: 14px;
+  }
+
+  .game-page .guess-heading {
+    max-width: 90%;
+    font-size: 12px;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
+    padding: 7px 10px;
+  }
+
+  .game-page .game-guess-area .grid-auto {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .game-page .game-guess-area .grid-auto .btn {
+    min-height: 44px;
+    padding: 8px 5px;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  /* SIDEBAR */
+  /* Stack sidebar panels vertically on mobile */
+.game-page .game-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.game-page .leaderboard-panel,
+.game-page .progress-panel,
+.game-page .history-panel {
+  width: 100%;
+  grid-column: auto;
+}
+
+  .game-page .game-sidebar .game-panel {
+    min-width: 0;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  /* LEADERBOARD */
+  .game-page .leaderboard-panel {
+    grid-column: auto;
+  }
+
+  .game-page .leaderboard-panel .score-mode-switch {
+    display: flex;
+    gap: 4px;
+  }
+
+  .game-page .leaderboard-panel .score-mode-switch .btn {
+    padding: 7px 4px;
+    font-size: 10px;
+  }
+
+  .game-page .leaderboard-panel .score-table th {
+    font-size: 9px;
+    padding: 7px 3px;
+  }
+
+  .game-page .leaderboard-panel .score-table td {
+    font-size: 11px;
+    padding: 8px 3px;
+  }
+
+  /* ROUND PROGRESS */
+  .game-page .progress-panel {
+    grid-column: auto;
+  }
+
+  .game-page .game-sidebar h3 {
+    font-size: 15px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .game-page .progress-node span {
+    width: 27px;
+    height: 27px;
+    font-size: 12px;
+  }
+
+  .game-page .progress-node small {
+    font-size: 9px;
+  }
+
+  .game-page .progress-line {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .game-page .guess-progress-label {
+    font-size: 9px;
+    gap: 4px;
+  }
+
+  /* ROUND HISTORY */
+  .game-page .history-panel {
+    grid-column: 1 / -1;
+  }
+
+  .game-page .history-panel h3 {
+    margin-bottom: 12px;
+  }
+
+  /* ERROR */
+  .game-page .game-error {
+    margin: 0 0 12px;
+    font-size: 12px;
+  }
+
+  /* FOOTER */
+  .game-page .game-footer {
+    position: relative;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 9px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 13px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+}
+
+
+
+/* Desktop: original placement beside room code */
+.game-page .game-host-controls {
+  display: none;
+}
+
+/* Mobile: move reveal action below guessing */
+@media (max-width: 720px) {
+  .game-page .game-reveal-control {
+    display: none !important;
+  }
+
+  .game-page .game-host-controls {
+    display: flex;
+    position: static;
+    width: 100%;
+    margin: 0;
+    padding: 12px;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid var(--yellow);
+    background: rgba(255, 214, 0, .07);
+  }
+
+  .game-page .game-host-controls .btn {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+  }
+}

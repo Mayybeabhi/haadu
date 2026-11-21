@@ -483,7 +483,19 @@ setTotalRounds(songsPerPlayer * roomPlayers.length)
                     </div>
                   )}
                 </div>
-
+{isAdmin && phase === 'playing' &&
+  players.length > 0 &&
+  allGuesses.length >= players.length && (
+    <div className="game-host-controls">
+      <Button
+        color="yellow"
+        onClick={handleEndRound}
+        disabled={loading}
+      >
+        {loading ? 'REVEALING...' : 'REVEAL ANSWER →'}
+      </Button>
+    </div>
+  )}
                 
               </>
             )}
