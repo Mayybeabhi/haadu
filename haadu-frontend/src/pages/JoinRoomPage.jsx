@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
-import { setGameState } from '../store/gameStore'
 import { joinRoom } from '../api/roomApi'
+import { getGameState, setGameState } from '../store/gameStore'
 import './JoinRoomPage.css'
 
 export default function JoinRoomPage() {
   const navigate = useNavigate()
-
+  const { user } = getGameState()
   const [roomCode, setRoomCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -44,8 +44,9 @@ export default function JoinRoomPage() {
         </a>
 
         <nav>
-          <a href="/#how-to-play">HOW TO PLAY</a>
-          <a href="/#about">ABOUT</a>
+          <span className="room-choice-user">
+             {user.username}
+          </span>
           <span className="join-room-equalizer">▮ ▮ ▮</span>
         </nav>
       </header>

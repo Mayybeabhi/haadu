@@ -7,6 +7,7 @@ import JoinRoomPage from './pages/JoinRoomPage'
 import LobbyPage from './pages/LobbyPage'
 import GamePage from './pages/GamePage'
 import ResultsPage from './pages/ResultsPage'
+import HowToPlayPage from './pages/HowToPlayPage'
 export default function App(){
     return(
         <Routes>
@@ -19,6 +20,7 @@ export default function App(){
             <Route path="/room/:roomCode/game" element={<GamePage />} />
             <Route path="/room/:roomCode/results" element={<ResultsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/how-to-play" element={<HowToPlayPage />} />
         </Routes>
     )
 }

@@ -1,0 +1,672 @@
+
+/* =========================================
+   HAADU PLAYBOOK
+   Shared Retro CRT / Analog Music Aesthetic
+========================================= */
+
+.playbook-page {
+  --yellow: #ffd600;
+  --pink: #ff168a;
+  --cream: #f2dfc4;
+  --black: #090909;
+  --green: #27ff86;
+
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+
+  width: 100%;
+  height: 100dvh;
+
+  padding: 0 3.5%;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #191614 0%,
+      #0b0b0b 65%,
+      #050505 100%
+    );
+
+  color: var(--cream);
+  font-family: 'Arial Narrow', 'Roboto Condensed', sans-serif;
+}
+
+.playbook-page,
+.playbook-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CRT SCANLINES
+   Same as Home Page
+========================================= */
+
+.playbook-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  pointer-events: none;
+  opacity: 0.20;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.75) 4px,
+    rgba(0, 0, 0, 0.75) 5px
+  );
+
+  background-size: 100% 5px;
+
+  animation: playbook-crt-scan 8s linear infinite;
+}
+
+@keyframes playbook-crt-scan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 100px;
+  }
+}
+
+/* =========================================
+   FILM GRAIN
+   Same as Home Page
+========================================= */
+
+.playbook-page::after {
+  content: '';
+
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+
+  pointer-events: none;
+  opacity: 0.12;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+/* =========================================
+   HEADER
+   Same as Home Page
+========================================= */
+
+.playbook-nav {
+  height: 64px;
+  min-height: 64px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #aaa;
+
+  position: relative;
+  z-index: 2;
+}
+
+.playbook-nav::after {
+  content: '';
+
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    transparent 70%
+  );
+}
+
+.playbook-logo {
+  color: var(--yellow);
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 30px;
+  letter-spacing: -1px;
+
+  text-decoration: none;
+  text-shadow: 2px 2px #6d4700;
+}
+
+.playbook-logo span {
+  color: var(--pink);
+}
+
+.playbook-back {
+  background: transparent;
+  border: 0;
+  color: var(--cream);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.playbook-back:hover {
+  color: var(--yellow);
+}
+
+/* =========================================
+   INTRO
+========================================= */
+
+.playbook-intro {
+  position: relative;
+  z-index: 1;
+
+  max-width: 900px;
+  width: 100%;
+
+  margin: 75px auto 55px;
+  text-align: center;
+}
+
+.playbook-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--green);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  margin-bottom: 22px;
+}
+
+.playbook-eyebrow span {
+  font-size: 16px;
+}
+
+.playbook-intro h1 {
+  margin: 0;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(65px, 10vw, 125px);
+  line-height: 0.82;
+  letter-spacing: -2px;
+
+  transform: rotate(-2deg);
+}
+
+.playbook-intro h1 span {
+  color: var(--yellow);
+}
+
+.playbook-intro p {
+  margin-top: 30px;
+  margin-bottom: 0;
+
+  color: #c6b9a8;
+
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.playbook-stamp {
+  position: absolute;
+  right: 3%;
+  top: 15%;
+
+  transform: rotate(12deg);
+
+  border: 2px solid var(--pink);
+  color: var(--pink);
+
+  padding: 10px 15px;
+
+  display: flex;
+  flex-direction: column;
+
+  font-family: Impact, sans-serif;
+  letter-spacing: 1px;
+}
+
+.playbook-stamp span {
+  font-size: 9px;
+}
+
+.playbook-stamp strong {
+  font-size: 19px;
+}
+
+/* =========================================
+   WARNING STRIP
+========================================= */
+
+.playbook-warning {
+  position: relative;
+  z-index: 1;
+
+  max-width: 1050px;
+  width: 100%;
+
+  margin: 0 auto 45px;
+  padding: 13px 18px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+
+  background: var(--pink);
+  color: #080808;
+
+  font-family: Impact, sans-serif;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+}
+
+/* =========================================
+   PLAYBOOK STEPS
+========================================= */
+
+.playbook-steps {
+  position: relative;
+  z-index: 1;
+
+  max-width: 1050px;
+  width: 100%;
+
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.playbook-step {
+  min-height: 190px;
+
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 75px 90px 1fr;
+  align-items: center;
+  gap: 22px;
+
+  padding: 30px 20px;
+
+  border-bottom: 1px solid rgba(242, 223, 196, 0.2);
+}
+
+.playbook-step:nth-child(even) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.playbook-step-number {
+  align-self: start;
+
+  color: var(--yellow);
+
+  font-family: Impact, sans-serif;
+  font-size: 42px;
+
+  opacity: 0.8;
+}
+
+.playbook-step-icon {
+  width: 76px;
+  height: 76px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--pink);
+  color: var(--pink);
+
+  font-family: Impact, sans-serif;
+  font-size: 43px;
+
+  transform: rotate(-5deg);
+}
+
+.playbook-step:nth-child(even) .playbook-step-icon {
+  border-color: var(--yellow);
+  color: var(--yellow);
+
+  transform: rotate(5deg);
+}
+
+.playbook-step-content {
+  min-width: 0;
+}
+
+.playbook-step-label {
+  color: var(--pink);
+
+  font-size: 10px;
+  letter-spacing: 3px;
+
+  margin-bottom: 8px;
+}
+
+.playbook-step h2 {
+  margin: 0;
+
+  font-family: Impact, sans-serif;
+  font-size: clamp(27px, 4vw, 43px);
+
+  line-height: 0.95;
+  letter-spacing: 0.5px;
+}
+
+.playbook-step p {
+  max-width: 620px;
+
+  color: rgba(242, 223, 196, 0.72);
+
+  font-size: 15px;
+  line-height: 1.55;
+
+  margin: 12px 0;
+}
+
+.playbook-step-note {
+  color: var(--yellow);
+
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.playbook-step-decoration {
+  position: absolute;
+  right: 18px;
+  top: 20px;
+
+  color: rgba(242, 223, 196, 0.08);
+
+  font-family: Impact, sans-serif;
+  font-size: 23px;
+
+  transform: rotate(90deg);
+}
+
+/* =========================================
+   FINALE
+========================================= */
+
+.playbook-finale {
+  position: relative;
+  z-index: 1;
+
+  max-width: 1050px;
+  width: 100%;
+
+  margin: 75px auto 60px;
+  padding: 65px 20px;
+
+  text-align: center;
+
+  border: 1px solid rgba(255, 214, 0, 0.35);
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255, 214, 0, 0.08),
+      transparent 70%
+    );
+}
+
+.playbook-finale-eyebrow {
+  color: var(--pink);
+
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.playbook-finale h2 {
+  margin: 20px 0;
+
+  font-family: Impact, sans-serif;
+  font-size: clamp(45px, 8vw, 85px);
+  line-height: 0.9;
+}
+
+.playbook-finale h2 span {
+  color: var(--yellow);
+}
+
+.playbook-finale p {
+  color: rgba(242, 223, 196, 0.7);
+
+  line-height: 1.5;
+}
+
+.playbook-finale button {
+  margin-top: 22px;
+  padding: 17px 28px;
+
+  border: 0;
+
+  background: var(--yellow);
+  color: #080808;
+
+  font-family: Impact, sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.playbook-finale button:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  background: var(--pink);
+}
+
+.playbook-footer-note {
+  margin-top: 45px;
+
+  color: rgba(242, 223, 196, 0.35);
+
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+/* =========================================
+   BOTTOM PINK INFORMATION STRIP
+   Same as Home Page
+========================================= */
+
+.playbook-footer {
+  min-height: 34px;
+  flex-shrink: 0;
+
+  margin: 0 -3.8%;
+  padding: 8px 3.8%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  background: var(--pink);
+  color: #080808;
+
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+========================================= */
+
+@media (max-width: 650px) {
+  .playbook-page {
+    padding: 0 18px;
+  }
+
+  .playbook-nav {
+    height: 58px;
+    min-height: 58px;
+  }
+
+  .playbook-logo {
+    font-size: 25px;
+  }
+
+  .playbook-back {
+    font-size: 9px;
+  }
+
+  .playbook-intro {
+    margin: 55px auto 35px;
+  }
+
+  .playbook-eyebrow {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .playbook-intro h1 {
+    font-size: clamp(55px, 14vw, 82px);
+  }
+
+  .playbook-intro p {
+    font-size: 13px;
+    margin-top: 22px;
+  }
+
+  .playbook-stamp {
+    position: relative;
+
+    display: inline-flex;
+
+    right: auto;
+    top: auto;
+
+    margin-top: 20px;
+  }
+
+  .playbook-warning {
+    margin-bottom: 25px;
+    padding: 11px;
+
+    font-size: 9px;
+    letter-spacing: 0.7px;
+  }
+
+  .playbook-step {
+    min-height: auto;
+
+    grid-template-columns: 38px 52px 1fr;
+    gap: 10px;
+
+    padding: 23px 5px;
+  }
+
+  .playbook-step-number {
+    font-size: 27px;
+  }
+
+  .playbook-step-icon {
+    width: 48px;
+    height: 48px;
+
+    font-size: 28px;
+  }
+
+  .playbook-step-label {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+
+  .playbook-step h2 {
+    font-size: clamp(23px, 6vw, 31px);
+  }
+
+  .playbook-step p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .playbook-step-note {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .playbook-step-decoration {
+    display: none;
+  }
+
+  .playbook-finale {
+    margin: 45px auto 35px;
+    padding: 45px 12px;
+  }
+
+  .playbook-finale h2 {
+    font-size: clamp(43px, 11vw, 62px);
+  }
+
+  .playbook-finale p {
+    font-size: 12px;
+  }
+
+  .playbook-finale button {
+    padding: 15px 18px;
+    font-size: 15px;
+  }
+
+  .playbook-footer-note {
+    font-size: 7px;
+    line-height: 1.5;
+  }
+
+  .playbook-footer {
+    margin: 0 -18px;
+    padding: 10px 15px;
+
+    justify-content: center;
+    flex-wrap: wrap;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .playbook-scanlines {
+    animation: none;
+  }
+
+  .playbook-back,
+  .playbook-finale button {
+    transition: none;
+  }
+}
+
+.playbook-page ::selection {
+  background: var(--pink);
+  color: #090909;
+}

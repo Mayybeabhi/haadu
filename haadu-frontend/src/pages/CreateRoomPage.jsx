@@ -56,8 +56,9 @@ export default function CreateRoomPage() {
         </a>
 
         <nav>
-          <a href="/#how-to-play">HOW TO PLAY</a>
-          <a href="/#about">ABOUT</a>
+          <span className="room-choice-user">
+             {user.username}
+          </span>
           <span className="create-room-equalizer">▮ ▮ ▮</span>
         </nav>
       </header>

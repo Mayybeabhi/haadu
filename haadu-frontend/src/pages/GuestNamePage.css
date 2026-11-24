@@ -679,3 +679,19 @@ body,
     font-size: 8px;
   }
 }
+/* HOW TO PLAY hover */
+.haadu-nav nav a {
+  display: inline-block;
+  color: var(--crt-white);
+  text-decoration: none;
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+}
+
+.haadu-nav nav a:hover {
+  color: var(--crt-yellow);
+  text-shadow: 0 0 8px rgba(255, 214, 0, 0.4);
+}

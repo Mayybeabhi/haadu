@@ -51,8 +51,7 @@ export default function GuestNamePage() {
         </a>
 
         <nav>
-          <a href="/">HOW TO PLAY</a>
-          <a href="/">ABOUT</a>
+          <a href="/how-to-play">HOW TO PLAY</a>
           <span className="nav-equalizer">▮ ▮ ▮</span>
         </nav>
       </header>

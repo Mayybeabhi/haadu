@@ -16,8 +16,7 @@ export default function HomePage() {
         </a>
 
         <nav>
-          <a href="#how-to-play">HOW TO PLAY</a>
-          <a href="#about">ABOUT</a>
+          <a href="/how-to-play">HOW TO PLAY</a>
           <span className="home-equalizer">▮ ▮ ▮</span>
         </nav>
       </header>
