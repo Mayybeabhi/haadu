@@ -1,6 +1,3 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
 *.css linguist-detectable=false
-# Exclude frontend JavaScript
-haadu-frontend/**/*.js linguist-detectable=false
-haadu-frontend/**/*.jsx linguist-detectable=false
